@@ -1,0 +1,30 @@
+# Keep a minimal tracked placeholder structure in the data directory
+/data/*
+/results/*
+!/data/.gitkeep
+!/data/README.md
+!/data/raw/
+!/data/raw/.gitkeep
+!/data/interim/
+!/data/interim/.gitkeep
+!/data/processed/
+!/data/processed/.gitkeep
+
+/notebooks/ecm_mlflow_libs
+pr_venv.env
+pr_venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+**/.DS_Store
