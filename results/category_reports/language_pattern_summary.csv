@@ -1,0 +1,5 @@
+language,primary_language_prs,categories_compared,spearman_r_vs_overall,fastest_category,slowest_category,median_hour_range
+JavaScript,18084,11,0.4727272727272727,revert,feature,2.075
+Python,68316,11,0.4,revert,performance,4.6000000000000005
+Java,21785,11,0.5,revert,performance,16.683333333333334
+C++,11100,11,-0.12727272727272726,revert,feature,17.616666666666667

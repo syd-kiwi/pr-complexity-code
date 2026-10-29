@@ -1,0 +1,12 @@
+category,PR_count
+feature,82929
+bug_fix,82849
+refactor,18006
+documentation,85296
+testing,94353
+dependency,88644
+security,32163
+performance,21774
+configuration,57692
+release,69941
+revert,5543

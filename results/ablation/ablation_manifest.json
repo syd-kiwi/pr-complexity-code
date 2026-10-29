@@ -1,0 +1,42 @@
+{
+  "created_utc": "2026-10-29T04:56:41.657474+00:00",
+  "input_path": "C:\\Users\\sydne\\OneDrive\\Documents\\pr-complexity-code\\data\\prs_with_complexity.csv",
+  "input_size_bytes": 14748885517,
+  "input_modified_ns": 1793057484000000000,
+  "input_header_sha256": "391c4007bd8a35050ab1776233aef35dd754ab0cd8e5f6304011a5e6dbd4bac8",
+  "source_rows": 1338401,
+  "selected_rows": 1338401,
+  "evaluated_rows": 1338401,
+  "sample_modulus": null,
+  "invalid_sampling_ids": 0,
+  "component_mode": "saved",
+  "reference_cohort": "upstream saved percentiles",
+  "weights": {
+    "code": 0.3,
+    "files": 0.2,
+    "review": 0.25,
+    "configuration": 0.1,
+    "categories": 0.15
+  },
+  "review_internal_weights": {
+    "comments": 0.6,
+    "reviewers": 0.4
+  },
+  "score_decimals": 2,
+  "exclude_zero_merge_time": false,
+  "allow_missing_features": false,
+  "missing_features": [],
+  "constant_components": [],
+  "raw_cleaning": [],
+  "rank_agreement_cohort": "same valid target rows as merge-time correlation",
+  "versions": {
+    "python": "3.12.10",
+    "pandas": "2.2.3",
+    "numpy": "2.5.4",
+    "scipy": "1.13.1"
+  },
+  "pre_review_definition": "Review omitted; remaining weights divided by 0.75",
+  "association_rows": 1338401,
+  "pearson_target": "log1p(hours)",
+  "component_pair_cohort": "valid merge-time rows, pairwise available inputs"
+}

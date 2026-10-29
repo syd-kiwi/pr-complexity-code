@@ -1,6 +1,5 @@
 # Keep a minimal tracked placeholder structure in the data directory
 /data/*
-/results/*
 !/data/.gitkeep
 !/data/README.md
 !/data/raw/

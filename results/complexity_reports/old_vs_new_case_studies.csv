@@ -1,0 +1,1075 @@
+case_type,repository_id,pull_request_id,is_open_source,title,body,merge_day,merge_month,files_added,files_deleted,files_modified,files_touched,lines_modified,code_lines_modified,config_lines_modified,minutes_to_merge,num_reviewers,num_review_comments,is_code_pr,complexity_score,lines_added_by_language,lines_deleted_by_language,languages_list,had_copilot_seat,user_id,title_clean,body_clean,title_lower,body_lower,detected_language,title_clean_nlp,body_clean_nlp,combined_text_nlp,title_word_count,body_word_count,has_title,has_body,short_body,kw_feature,kw_bug_fix,kw_refactor,kw_documentation,kw_testing,kw_dependency,kw_security,kw_performance,kw_configuration,kw_release,kw_revert,keyword_categories,keyword_category_count,has_keyword_match,complexity_code_size,complexity_file_breadth,complexity_review_comments,complexity_reviewers,complexity_config,complexity_category_breadth,complexity_review_burden,pr_complexity_score,pr_complexity_level,old_complexity_percentile,new_complexity_percentile,complexity_percentile_change
+New score much higher,1099961760,3351383477,True,Make sure that each messaging channel has its own session,"<!--
+## For Automatticians!
+
+:wave: Just a quick reminder that this is a public repo. Please don't include any internal links or sensitive data (like PII, private code, customer names, site URLs, etc. Any fixes related to security should be discussed with Platform before opening a PR. If you're not sure if something is safe to share, please just ask!
+
+## For external contributors!
+
+Welcome! We look forward to your contribution! ❤️
+-->
+## Description
+<!--
+A few sentences providing more context and describing the overall goals of the Pull Request.
+
+Should include any special considerations, decisions, and links to relevant publicly available sources (e.g. GitHub issues)
+-->
+
+This PR ensures that 2 or more WordPress site that belongs to the same Salesforce org doesn't share the same chat session. Without this PR, 2 or more WordPress site that belongs to the same Salesforce org **will share the same chat session**
+
+We need to have a different session so that the prechat field are different, because prechat fields are session-based and not real-time. Also, it's a UX kind of a problem - it's weird to see the same bot and conversation that was on Site A appear on Site B.
+
+One caveat with this integration is that we can no longer continue the session after the tab has closed if the user has two sites under the same Salesforce org open.
+
+## Pre-review checklist
+
+Please make sure the items below have been covered before requesting a review:
+
+- [ ] This change works and has been tested locally or in Codespaces (or has an appropriate fallback).
+- [ ] This change has relevant unit tests (if applicable).
+- [ ] This change has relevant documentation additions / updates (if applicable).
+- [ ] I've created a changelog description that aligns with the provided examples.
+
+## Pre-deploy checklist
+
+- [ ] VIP staff: Ensure any alerts added/updated conform to internal standards (see internal documentation).
+
+## Steps to Test
+
+For testing, we can use the scratch org that i've setup.
+
+1. Before anything, checkout the branch and run `npm run build:dev`
+1. Add these to `env.php`:
+
+```php
+<?php
+$embedding_script_123 = <<<'ESW'
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00Dcb00000BhF2K',
+				'WP_123_1_vip_agentforce_123_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1231vipagentforc1772558583071',
+				{
+					scrt2URL: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1231vipagentforc1772558583071/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+ESW;
+
+$embedding_script_124 = <<<'ESW'
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00Dcb00000BhF2K',
+				'WP_124_1_vip_agentforce_124_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1241vipagentforc1772560601610',
+				{
+					scrt2URL: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1241vipagentforc1772560601610/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+ESW;
+
+
+// Fake config for the mock API (use any URL, it will be intercepted)
+define( 'VIP_AGENTFORCE_CONFIGS', json_encode( [
+    'ingestion_api_instance_url' => 'https://hfrtknb-myzt8mrwg03tkzdgh0.c360a.salesforce.com',
+    'ingestion_api_token'        => ""snip"",
+    'ingestion_api_source_name'  => 'vip_agentforce_wp_post',
+    'ingestion_api_object_name'  => 'wordpress_post',
+    // Add preset hook config here (see Test Cases below)
+    // 'ingestion_api_sync_all_posts' => true,
+    'ingestion_api_categories'   => [ 'animals' ],
+    'agentforce_js_sdk_activated' => true,
+    'agentforce_embedding_script' => str_contains( $_SERVER['HTTP_HOST'] ?? '', 'vip-agentforce-124' ) ? $embedding_script_124 : $embedding_script_123,
+] ) );
+```
+2. Create two environments - `vip-agentforce-123` and `vip-agentforce-124` i.e:
+```
+vip dev-env create --slug=vip-agentforce-123
+vip dev-env start --slug=vip-agentforce-123
+vip dev-env create --slug=vip-agentforce-124
+vip dev-env start --slug=vip-agentforce-124
+```
+3. Open https://vip-agentforce-123.vipdev.lndo.site - make sure it's the `https` site.
+4. Open the developer console (F12 usually) and run `window.AgentforceCMP.loadSDK()`.
+5. Wait for the widget to load, click the widget bubble, wait for the agent to say something, and then say 'Hello!'
+6. Now, on a new tab, open https://vip-agentforce-124.vipdev.lndo.site - make sure it's the `https` site.
+7. Open the developer console (F12 usually) and run `window.AgentforceCMP.loadSDK()`.
+8. Wait for the widget to load, click the widget bubble, **ensure that you get a new session, and you don't see the session from the vip-agentforce-123 domain**.
+
+Without this PR,  step number 8 would instead show you the same session for both `vip-agentforce-123` and `vip-agentforce-124`.",2026-03-04,2026-03-01,0,0,1,1,1,1,0,112,3,4,True,0.0,{'JavaScript': 1},{},['JavaScript'],False,13258,Make sure that each messaging channel has its own session,"<!--
+## For Automatticians!
+
+:wave: Just a quick reminder that this is a public repo. Please don't include any internal links or sensitive data (like PII, private code, customer names, site URLs, etc. Any fixes related to security should be discussed with Platform before opening a PR. If you're not sure if something is safe to share, please just ask!
+
+## For external contributors!
+
+Welcome! We look forward to your contribution! ❤️
+-->
+## Description
+<!--
+A few sentences providing more context and describing the overall goals of the Pull Request.
+
+Should include any special considerations, decisions, and links to relevant publicly available sources (e.g. GitHub issues)
+-->
+
+This PR ensures that 2 or more WordPress site that belongs to the same Salesforce org doesn't share the same chat session. Without this PR, 2 or more WordPress site that belongs to the same Salesforce org **will share the same chat session**
+
+We need to have a different session so that the prechat field are different, because prechat fields are session-based and not real-time. Also, it's a UX kind of a problem - it's weird to see the same bot and conversation that was on Site A appear on Site B.
+
+One caveat with this integration is that we can no longer continue the session after the tab has closed if the user has two sites under the same Salesforce org open.
+
+## Pre-review checklist
+
+Please make sure the items below have been covered before requesting a review:
+
+- [ ] This change works and has been tested locally or in Codespaces (or has an appropriate fallback).
+- [ ] This change has relevant unit tests (if applicable).
+- [ ] This change has relevant documentation additions / updates (if applicable).
+- [ ] I've created a changelog description that aligns with the provided examples.
+
+## Pre-deploy checklist
+
+- [ ] VIP staff: Ensure any alerts added/updated conform to internal standards (see internal documentation).
+
+## Steps to Test
+
+For testing, we can use the scratch org that i've setup.
+
+1. Before anything, checkout the branch and run `npm run build:dev`
+1. Add these to `env.php`:
+
+```php
+<?php
+$embedding_script_123 = <<<'ESW'
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00Dcb00000BhF2K',
+				'WP_123_1_vip_agentforce_123_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1231vipagentforc1772558583071',
+				{
+					scrt2URL: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1231vipagentforc1772558583071/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+ESW;
+
+$embedding_script_124 = <<<'ESW'
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00Dcb00000BhF2K',
+				'WP_124_1_vip_agentforce_124_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1241vipagentforc1772560601610',
+				{
+					scrt2URL: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/ESWWP1241vipagentforc1772560601610/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+ESW;
+
+
+// Fake config for the mock API (use any URL, it will be intercepted)
+define( 'VIP_AGENTFORCE_CONFIGS', json_encode( [
+    'ingestion_api_instance_url' => 'https://hfrtknb-myzt8mrwg03tkzdgh0.c360a.salesforce.com',
+    'ingestion_api_token'        => ""snip"",
+    'ingestion_api_source_name'  => 'vip_agentforce_wp_post',
+    'ingestion_api_object_name'  => 'wordpress_post',
+    // Add preset hook config here (see Test Cases below)
+    // 'ingestion_api_sync_all_posts' => true,
+    'ingestion_api_categories'   => [ 'animals' ],
+    'agentforce_js_sdk_activated' => true,
+    'agentforce_embedding_script' => str_contains( $_SERVER['HTTP_HOST'] ?? '', 'vip-agentforce-124' ) ? $embedding_script_124 : $embedding_script_123,
+] ) );
+```
+2. Create two environments - `vip-agentforce-123` and `vip-agentforce-124` i.e:
+```
+vip dev-env create --slug=vip-agentforce-123
+vip dev-env start --slug=vip-agentforce-123
+vip dev-env create --slug=vip-agentforce-124
+vip dev-env start --slug=vip-agentforce-124
+```
+3. Open https://vip-agentforce-123.vipdev.lndo.site - make sure it's the `https` site.
+4. Open the developer console (F12 usually) and run `window.AgentforceCMP.loadSDK()`.
+5. Wait for the widget to load, click the widget bubble, wait for the agent to say something, and then say 'Hello!'
+6. Now, on a new tab, open https://vip-agentforce-124.vipdev.lndo.site - make sure it's the `https` site.
+7. Open the developer console (F12 usually) and run `window.AgentforceCMP.loadSDK()`.
+8. Wait for the widget to load, click the widget bubble, **ensure that you get a new session, and you don't see the session from the vip-agentforce-123 domain**.
+
+Without this PR,  step number 8 would instead show you the same session for both `vip-agentforce-123` and `vip-agentforce-124`.",make sure that each messaging channel has its own session,"<!--
+## for automatticians!
+
+:wave: just a quick reminder that this is a public repo. please don't include any internal links or sensitive data (like pii, private code, customer names, site urls, etc. any fixes related to security should be discussed with platform before opening a pr. if you're not sure if something is safe to share, please just ask!
+
+## for external contributors!
+
+welcome! we look forward to your contribution! ❤️
+-->
+## description
+<!--
+a few sentences providing more context and describing the overall goals of the pull request.
+
+should include any special considerations, decisions, and links to relevant publicly available sources (e.g. github issues)
+-->
+
+this pr ensures that 2 or more wordpress site that belongs to the same salesforce org doesn't share the same chat session. without this pr, 2 or more wordpress site that belongs to the same salesforce org **will share the same chat session**
+
+we need to have a different session so that the prechat field are different, because prechat fields are session-based and not real-time. also, it's a ux kind of a problem - it's weird to see the same bot and conversation that was on site a appear on site b.
+
+one caveat with this integration is that we can no longer continue the session after the tab has closed if the user has two sites under the same salesforce org open.
+
+## pre-review checklist
+
+please make sure the items below have been covered before requesting a review:
+
+- [ ] this change works and has been tested locally or in codespaces (or has an appropriate fallback).
+- [ ] this change has relevant unit tests (if applicable).
+- [ ] this change has relevant documentation additions / updates (if applicable).
+- [ ] i've created a changelog description that aligns with the provided examples.
+
+## pre-deploy checklist
+
+- [ ] vip staff: ensure any alerts added/updated conform to internal standards (see internal documentation).
+
+## steps to test
+
+for testing, we can use the scratch org that i've setup.
+
+1. before anything, checkout the branch and run `npm run build:dev`
+1. add these to `env.php`:
+
+```php
+<?php
+$embedding_script_123 = <<<'esw'
+<script type='text/javascript'>
+	function initembeddedmessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_us'; // for example, enter 'en' or 'en-us'
+
+			embeddedservice_bootstrap.init(
+				'00dcb00000bhf2k',
+				'wp_123_1_vip_agentforce_123_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/eswwp1231vipagentforc1772558583071',
+				{
+					scrt2url: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('error loading embedded messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/eswwp1231vipagentforc1772558583071/assets/js/bootstrap.min.js' onload='initembeddedmessaging()'></script>
+
+esw;
+
+$embedding_script_124 = <<<'esw'
+<script type='text/javascript'>
+	function initembeddedmessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_us'; // for example, enter 'en' or 'en-us'
+
+			embeddedservice_bootstrap.init(
+				'00dcb00000bhf2k',
+				'wp_124_1_vip_agentforce_124_vipdev_lndo',
+				'https://ruby-speed-1539-dev-ed.scratch.my.site.com/eswwp1241vipagentforc1772560601610',
+				{
+					scrt2url: 'https://ruby-speed-1539-dev-ed.scratch.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('error loading embedded messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://ruby-speed-1539-dev-ed.scratch.my.site.com/eswwp1241vipagentforc1772560601610/assets/js/bootstrap.min.js' onload='initembeddedmessaging()'></script>
+
+esw;
+
+
+// fake config for the mock api (use any url, it will be intercepted)
+define( 'vip_agentforce_configs', json_encode( [
+    'ingestion_api_instance_url' => 'https://hfrtknb-myzt8mrwg03tkzdgh0.c360a.salesforce.com',
+    'ingestion_api_token'        => ""snip"",
+    'ingestion_api_source_name'  => 'vip_agentforce_wp_post',
+    'ingestion_api_object_name'  => 'wordpress_post',
+    // add preset hook config here (see test cases below)
+    // 'ingestion_api_sync_all_posts' => true,
+    'ingestion_api_categories'   => [ 'animals' ],
+    'agentforce_js_sdk_activated' => true,
+    'agentforce_embedding_script' => str_contains( $_server['http_host'] ?? '', 'vip-agentforce-124' ) ? $embedding_script_124 : $embedding_script_123,
+] ) );
+```
+2. create two environments - `vip-agentforce-123` and `vip-agentforce-124` i.e:
+```
+vip dev-env create --slug=vip-agentforce-123
+vip dev-env start --slug=vip-agentforce-123
+vip dev-env create --slug=vip-agentforce-124
+vip dev-env start --slug=vip-agentforce-124
+```
+3. open https://vip-agentforce-123.vipdev.lndo.site - make sure it's the `https` site.
+4. open the developer console (f12 usually) and run `window.agentforcecmp.loadsdk()`.
+5. wait for the widget to load, click the widget bubble, wait for the agent to say something, and then say 'hello!'
+6. now, on a new tab, open https://vip-agentforce-124.vipdev.lndo.site - make sure it's the `https` site.
+7. open the developer console (f12 usually) and run `window.agentforcecmp.loadsdk()`.
+8. wait for the widget to load, click the widget bubble, **ensure that you get a new session, and you don't see the session from the vip-agentforce-123 domain**.
+
+without this pr,  step number 8 would instead show you the same session for both `vip-agentforce-123` and `vip-agentforce-124`.",en,sure each messaging channel own session,automatticians wave just quick reminder public repo please don include any internal links sensitive like pii private customer names site etc any fixes related security should discussed platform before opening not sure something safe share please just ask external contributors welcome look forward contribution description few sentences providing more context describing overall goals should include any special considerations decisions links relevant publicly available sources e.g issues ensures more wordpress site belongs same salesforce org doesn share same chat session more wordpress site belongs same salesforce org share same chat session need different session prechat field different because prechat fields session based not real time kind problem weird see same conversation site appear site caveat integration can longer continue session after tab closed user sites under same salesforce org open pre review checklist please sure items below been covered before requesting review works been tested locally codespaces appropriate fallback relevant unit applicable relevant documentation additions applicable created changelog description aligns provided examples pre deploy checklist vip staff ensure any alerts conform internal standards see internal documentation steps testing can scratch org setup before anything checkout run these create environments i.e open sure site open developer console f12 usually run wait widget load click widget bubble wait agent say something then say hello now tab open sure site open developer console f12 usually run wait widget load click widget bubble ensure session don see session vip agentforce domain step number would instead show same session,sure each messaging channel own session automatticians wave just quick reminder public repo please don include any internal links sensitive like pii private customer names site etc any fixes related security should discussed platform before opening not sure something safe share please just ask external contributors welcome look forward contribution description few sentences providing more context describing overall goals should include any special considerations decisions links relevant publicly available sources e.g issues ensures more wordpress site belongs same salesforce org doesn share same chat session more wordpress site belongs same salesforce org share same chat session need different session prechat field different because prechat fields session based not real time kind problem weird see same conversation site appear site caveat integration can longer continue session after tab closed user sites under same salesforce org open pre review checklist please sure items below been covered before requesting review works been tested locally codespaces appropriate fallback relevant unit applicable relevant documentation additions applicable created changelog description aligns provided examples pre deploy checklist vip staff ensure any alerts conform internal standards see internal documentation steps testing can scratch org setup before anything checkout run these create environments i.e open sure site open developer console f12 usually run wait widget load click widget bubble wait agent say something then say hello now tab open sure site open developer console f12 usually run wait widget load click widget bubble ensure session don see session vip agentforce domain step number would instead show same session,10,741,True,True,False,True,False,False,True,True,False,True,True,True,True,False,"[""feature"", ""documentation"", ""testing"", ""security"", ""performance"", ""configuration"", ""release""]",7,True,0.40576553663662834,0.14796126123635592,0.914168847751907,0.9370065473651021,0.17020571562633321,0.9194998359983293,0.923303927597185,53.71,High,0.49745928163532455,64.72936735701782,64.23190807538249
+New score much higher,60246359,4250043294,True,Fix flaky Q4 of 03753_join_runtime_filter_dynamically_disable,"<!--
+Linked issues and pull requests. Use full GitHub URLs, one relationship per line; delete the lines you don't need.
+
+Related: https://github.com/ClickHouse/ClickHouse/pull/111972
+Related: https://github.com/ClickHouse/ClickHouse/pull/106734
+-->
+
+
+### Changelog category (leave one):
+- CI Fix or Improvement (changelog entry is not required)
+
+
+### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
+...
+
+
+### Description
+
+`03753_join_runtime_filter_dynamically_disable` fails on the **Q4** line only, printing `Q4 0 ...`
+instead of `Q4 1 Ok`
+([sighting](https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=111405&sha=52132ba17e43cd9d589e2988df497eefc4ccc10d&name_0=PR&name_1=Stateless%20tests%20%28amd_debug%2C%20parallel%29)).
+
+**Root cause.** Q4 asserts `RuntimeFilterBlocksProcessed = 0`, which only the bloom filter reaches,
+via `setFullyDisabled()` on over-fill. With `join_runtime_filter_from_fixed_hash_table` on,
+`HashJoin::publishSharedRuntimeFilters` replaces that fully disabled bloom filter with a
+`SharedFixedHashTableRuntimeFilter`, which has no full-disable path. Q4's probe keys all lie inside
+the build range, so every row passes and only the pass-ratio heuristic throttles: the failing run
+recorded `Processed = 12 / Skipped = 290`. `Processed = 0` is unreachable there.
+
+**Onset is #111972**, as @ m-selmi identified in review.
+`max_bytes_ratio_before_external_join` defaults to 0.5, so `SpillingHashJoin` wraps the join by
+default and used to inherit `hasPostBuildPhase() = false`, which kept the shared filter unpublished.
+A/B on one host, one test file, one server configuration: with those two overrides removed the
+unpinned test passes 8 of 8 runs in one process; with them it passes the first run then fails 7 of 7
+at `Processed = 12`, byte-identical to CI. CIDB shows 5 such failures across 5 PRs within 8 hours of
+that merge, none in the preceding 45 days. The first run passes because the arm is
+chosen from the process-global hash-table statistics cache, which is also why this is invisible on
+master and shows up only in `parallel` jobs.
+
+**The change** pins `join_runtime_filter_from_fixed_hash_table = 0` for the file, selecting the
+implementation whose disabling behaviour Q4 exists to test. It costs no coverage: only Q4 ever
+reaches the shared-filter arm (3 runs, 3 publications, all `log_comment = Q4`), and the other six
+queries give identical counters pinned and unpinned. `04241` remains that arm's dedicated test.
+
+**Validation.** 40 of 40 runs pass (20 randomized, 20 not); removing the pin reddens it 5 of 5.
+
+Noticed, not filed: `SharedFixedHashTableRuntimeFilter` has no full-disable path at all.
+
+
+<!-- ch-version-info:start -->
+### Version info
+- Merged into: `26.8.1.1181` (included in `26.8` and later)
+<!-- ch-version-info:end -->",2026-08-11,2026-08-01,0,0,1,1,1,1,0,989,3,4,True,0.0,{'SQL': 1},{},['SQL'],True,1136383,Fix flaky Q4 of 03753_join_runtime_filter_dynamically_disable,"<!--
+Linked issues and pull requests. Use full GitHub URLs, one relationship per line; delete the lines you don't need.
+
+Related: https://github.com/ClickHouse/ClickHouse/pull/111972
+Related: https://github.com/ClickHouse/ClickHouse/pull/106734
+-->
+
+
+### Changelog category (leave one):
+- CI Fix or Improvement (changelog entry is not required)
+
+
+### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
+...
+
+
+### Description
+
+`03753_join_runtime_filter_dynamically_disable` fails on the **Q4** line only, printing `Q4 0 ...`
+instead of `Q4 1 Ok`
+([sighting](https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=111405&sha=52132ba17e43cd9d589e2988df497eefc4ccc10d&name_0=PR&name_1=Stateless%20tests%20%28amd_debug%2C%20parallel%29)).
+
+**Root cause.** Q4 asserts `RuntimeFilterBlocksProcessed = 0`, which only the bloom filter reaches,
+via `setFullyDisabled()` on over-fill. With `join_runtime_filter_from_fixed_hash_table` on,
+`HashJoin::publishSharedRuntimeFilters` replaces that fully disabled bloom filter with a
+`SharedFixedHashTableRuntimeFilter`, which has no full-disable path. Q4's probe keys all lie inside
+the build range, so every row passes and only the pass-ratio heuristic throttles: the failing run
+recorded `Processed = 12 / Skipped = 290`. `Processed = 0` is unreachable there.
+
+**Onset is #111972**, as @ m-selmi identified in review.
+`max_bytes_ratio_before_external_join` defaults to 0.5, so `SpillingHashJoin` wraps the join by
+default and used to inherit `hasPostBuildPhase() = false`, which kept the shared filter unpublished.
+A/B on one host, one test file, one server configuration: with those two overrides removed the
+unpinned test passes 8 of 8 runs in one process; with them it passes the first run then fails 7 of 7
+at `Processed = 12`, byte-identical to CI. CIDB shows 5 such failures across 5 PRs within 8 hours of
+that merge, none in the preceding 45 days. The first run passes because the arm is
+chosen from the process-global hash-table statistics cache, which is also why this is invisible on
+master and shows up only in `parallel` jobs.
+
+**The change** pins `join_runtime_filter_from_fixed_hash_table = 0` for the file, selecting the
+implementation whose disabling behaviour Q4 exists to test. It costs no coverage: only Q4 ever
+reaches the shared-filter arm (3 runs, 3 publications, all `log_comment = Q4`), and the other six
+queries give identical counters pinned and unpinned. `04241` remains that arm's dedicated test.
+
+**Validation.** 40 of 40 runs pass (20 randomized, 20 not); removing the pin reddens it 5 of 5.
+
+Noticed, not filed: `SharedFixedHashTableRuntimeFilter` has no full-disable path at all.
+
+
+<!-- ch-version-info:start -->
+### Version info
+- Merged into: `26.8.1.1181` (included in `26.8` and later)
+<!-- ch-version-info:end -->",fix flaky q4 of 03753_join_runtime_filter_dynamically_disable,"<!--
+linked issues and pull requests. use full github urls, one relationship per line; delete the lines you don't need.
+
+related: https://github.com/clickhouse/clickhouse/pull/111972
+related: https://github.com/clickhouse/clickhouse/pull/106734
+-->
+
+
+### changelog category (leave one):
+- ci fix or improvement (changelog entry is not required)
+
+
+### changelog entry (a [user-readable short description](https://github.com/clickhouse/clickhouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into changelog.md):
+...
+
+
+### description
+
+`03753_join_runtime_filter_dynamically_disable` fails on the **q4** line only, printing `q4 0 ...`
+instead of `q4 1 ok`
+([sighting](https://s3.amazonaws.com/clickhouse-test-reports/json.html?pr=111405&sha=52132ba17e43cd9d589e2988df497eefc4ccc10d&name_0=pr&name_1=stateless%20tests%20%28amd_debug%2c%20parallel%29)).
+
+**root cause.** q4 asserts `runtimefilterblocksprocessed = 0`, which only the bloom filter reaches,
+via `setfullydisabled()` on over-fill. with `join_runtime_filter_from_fixed_hash_table` on,
+`hashjoin::publishsharedruntimefilters` replaces that fully disabled bloom filter with a
+`sharedfixedhashtableruntimefilter`, which has no full-disable path. q4's probe keys all lie inside
+the build range, so every row passes and only the pass-ratio heuristic throttles: the failing run
+recorded `processed = 12 / skipped = 290`. `processed = 0` is unreachable there.
+
+**onset is #111972**, as @ m-selmi identified in review.
+`max_bytes_ratio_before_external_join` defaults to 0.5, so `spillinghashjoin` wraps the join by
+default and used to inherit `haspostbuildphase() = false`, which kept the shared filter unpublished.
+a/b on one host, one test file, one server configuration: with those two overrides removed the
+unpinned test passes 8 of 8 runs in one process; with them it passes the first run then fails 7 of 7
+at `processed = 12`, byte-identical to ci. cidb shows 5 such failures across 5 prs within 8 hours of
+that merge, none in the preceding 45 days. the first run passes because the arm is
+chosen from the process-global hash-table statistics cache, which is also why this is invisible on
+master and shows up only in `parallel` jobs.
+
+**the change** pins `join_runtime_filter_from_fixed_hash_table = 0` for the file, selecting the
+implementation whose disabling behaviour q4 exists to test. it costs no coverage: only q4 ever
+reaches the shared-filter arm (3 runs, 3 publications, all `log_comment = q4`), and the other six
+queries give identical counters pinned and unpinned. `04241` remains that arm's dedicated test.
+
+**validation.** 40 of 40 runs pass (20 randomized, 20 not); removing the pin reddens it 5 of 5.
+
+noticed, not filed: `sharedfixedhashtableruntimefilter` has no full-disable path at all.
+
+
+<!-- ch-version-info:start -->
+### version info
+- merged into: `26.8.1.1181` (included in `26.8` and later)
+<!-- ch-version-info:end -->",en,fix flaky join runtime filter dynamically disable,linked issues requests full relationship per line delete lines don need related related changelog category leave fix improvement changelog entry not required changelog entry user readable short description goes changelog.md description fails line only printing instead sighting root cause asserts which only bloom filter reaches via over fill replaces fully disabled bloom filter which full disable path probe keys all lie inside build range every row passes only pass ratio heuristic throttles failing run recorded unreachable there onset selmi identified review defaults wraps join default inherit which kept shared filter unpublished host server configuration those overrides unpinned passes runs process them passes first run then fails byte identical cidb shows such failures across prs within hours preceding days first run passes because arm chosen process global hash table statistics cache which why invisible master shows only jobs pins selecting implementation whose disabling behaviour exists costs coverage only ever reaches shared filter arm runs publications all other six queries give identical counters pinned unpinned remains arm dedicated validation runs pass randomized not removing pin reddens noticed not filed full disable path all version info start version info included later version info end,fix flaky join runtime filter dynamically disable linked issues requests full relationship per line delete lines don need related related changelog category leave fix improvement changelog entry not required changelog entry user readable short description goes changelog.md description fails line only printing instead sighting root cause asserts which only bloom filter reaches via over fill replaces fully disabled bloom filter which full disable path probe keys all lie inside build range every row passes only pass ratio heuristic throttles failing run recorded unreachable there onset selmi identified review defaults wraps join default inherit which kept shared filter unpublished host server configuration those overrides unpinned passes runs process them passes first run then fails byte identical cidb shows such failures across prs within hours preceding days first run passes because arm chosen process global hash table statistics cache which why invisible master shows only jobs pins selecting implementation whose disabling behaviour exists costs coverage only ever reaches shared filter arm runs publications all other six queries give identical counters pinned unpinned remains arm dedicated validation runs pass randomized not removing pin reddens noticed not filed full disable path all version info start version info included later version info end,5,423,True,True,False,False,True,False,True,True,True,False,True,True,True,False,"[""bug_fix"", ""documentation"", ""testing"", ""dependency"", ""performance"", ""configuration"", ""release""]",7,True,0.40576553663662834,0.14796126123635592,0.914168847751907,0.9370065473651021,0.17020571562633321,0.9194998359983293,0.923303927597185,53.71,High,0.49745928163532455,64.72936735701782,64.23190807538249
+New score much higher,60246359,3483103485,True,fix data race in keeper,"Fixes a data race found in https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=100741&sha=9768ea0b69d2f0f262e72d8b15618ad9cce46439&name_0=PR&name_1=Integration%20tests%20%28amd_tsan%2C%202%2F6%29
+https://github.com/ClickHouse/ClickHouse/pull/100741
+
+[cidb](https://play.clickhouse.com/play?user=play&run=1#V0lUSAogICAgOTAgQVMgaW50ZXJ2YWxfZGF5cwpTRUxFQ1QKICAgIHRvU3RhcnRPZkRheShjaGVja19zdGFydF90aW1lKSBBUyBkYXksCiAgICBjb3VudCgpIEFTIGZhaWx1cmVzLAogICAgZ3JvdXBVbmlxQXJyYXkocHVsbF9yZXF1ZXN0X251bWJlcikgQVMgcHJzLAogICAgYW55KHJlcG9ydF91cmwpIEFTIHJlcG9ydF91cmwKRlJPTSBjaGVja3MKV0hFUkUgKG5vdygpIC0gdG9JbnRlcnZhbERheShpbnRlcnZhbF9kYXlzKSkgPD0gY2hlY2tfc3RhcnRfdGltZQogICAgQU5EIHRlc3RfbmFtZSA9ICd0ZXN0X2tlZXBlcl9zbmFwc2hvdF9jaHVua2VkX3RyYW5zZmVyL3Rlc3QucHk6OnRlc3RfcmVjb3Zlcl9mcm9tX3NuYXBzaG90X3NlbnRfYnlfb2xkX2xlYWRlcltyZW1vdGVfZGlza10nCiAgICAtLSBBTkQgY2hlY2tfbmFtZSA9ICdJbnRlZ3JhdGlvbiB0ZXN0cyAoYW1kX3RzYW4sIDIvNiknCiAgICBBTkQgdGVzdF9zdGF0dXMgSU4gKCdGQUlMJywgJ0VSUk9SJykKICAgIEFORCAocHVsbF9yZXF1ZXN0X251bWJlciA9IDAgT1IgYmFzZV9yZWYgSU4gKCdtYXN0ZXInKSkKICAgIEFORCB0ZXN0X2NvbnRleHRfcmF3IExJS0UgJyVFICAgRXhjZXB0aW9uJScKR1JPVVAgQlkgZGF5Ck9SREVSIEJZIGRheSBERVNDCg==)
+
+### Changelog category (leave one):
+- Not for changelog (changelog entry is not required)
+
+
+### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
+...
+
+### Documentation entry for user-facing changes
+
+- [ ] Documentation is written (mandatory for new features)
+
+<!---
+Directly edit documentation source files in the ""docs"" folder with the same pull-request as code changes
+
+or
+
+Add a user-readable short description of the changes that should be added to docs.clickhouse.com below.
+
+At a minimum, the following information should be added (but add more as needed).
+- Motivation: Why is this function, table engine, etc. useful to ClickHouse users?
+
+- Parameters: If the feature being added takes arguments, options or is influenced by settings, please list them below with a brief explanation.
+
+- Example use: A query or command.
+-->
+",2026-04-13,2026-04-01,0,0,1,1,1,1,0,15766,3,13,True,0.0,{'C++': 1},{},['C++'],True,302760,fix data race in keeper,"Fixes a data race found in https://s3.amazonaws.com/clickhouse-test-reports/json.html?PR=100741&sha=9768ea0b69d2f0f262e72d8b15618ad9cce46439&name_0=PR&name_1=Integration%20tests%20%28amd_tsan%2C%202%2F6%29
+https://github.com/ClickHouse/ClickHouse/pull/100741
+
+[cidb](https://play.clickhouse.com/play?user=play&run=1#V0lUSAogICAgOTAgQVMgaW50ZXJ2YWxfZGF5cwpTRUxFQ1QKICAgIHRvU3RhcnRPZkRheShjaGVja19zdGFydF90aW1lKSBBUyBkYXksCiAgICBjb3VudCgpIEFTIGZhaWx1cmVzLAogICAgZ3JvdXBVbmlxQXJyYXkocHVsbF9yZXF1ZXN0X251bWJlcikgQVMgcHJzLAogICAgYW55KHJlcG9ydF91cmwpIEFTIHJlcG9ydF91cmwKRlJPTSBjaGVja3MKV0hFUkUgKG5vdygpIC0gdG9JbnRlcnZhbERheShpbnRlcnZhbF9kYXlzKSkgPD0gY2hlY2tfc3RhcnRfdGltZQogICAgQU5EIHRlc3RfbmFtZSA9ICd0ZXN0X2tlZXBlcl9zbmFwc2hvdF9jaHVua2VkX3RyYW5zZmVyL3Rlc3QucHk6OnRlc3RfcmVjb3Zlcl9mcm9tX3NuYXBzaG90X3NlbnRfYnlfb2xkX2xlYWRlcltyZW1vdGVfZGlza10nCiAgICAtLSBBTkQgY2hlY2tfbmFtZSA9ICdJbnRlZ3JhdGlvbiB0ZXN0cyAoYW1kX3RzYW4sIDIvNiknCiAgICBBTkQgdGVzdF9zdGF0dXMgSU4gKCdGQUlMJywgJ0VSUk9SJykKICAgIEFORCAocHVsbF9yZXF1ZXN0X251bWJlciA9IDAgT1IgYmFzZV9yZWYgSU4gKCdtYXN0ZXInKSkKICAgIEFORCB0ZXN0X2NvbnRleHRfcmF3IExJS0UgJyVFICAgRXhjZXB0aW9uJScKR1JPVVAgQlkgZGF5Ck9SREVSIEJZIGRheSBERVNDCg==)
+
+### Changelog category (leave one):
+- Not for changelog (changelog entry is not required)
+
+
+### Changelog entry (a [user-readable short description](https://github.com/ClickHouse/ClickHouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into CHANGELOG.md):
+...
+
+### Documentation entry for user-facing changes
+
+- [ ] Documentation is written (mandatory for new features)
+
+<!---
+Directly edit documentation source files in the ""docs"" folder with the same pull-request as code changes
+
+or
+
+Add a user-readable short description of the changes that should be added to docs.clickhouse.com below.
+
+At a minimum, the following information should be added (but add more as needed).
+- Motivation: Why is this function, table engine, etc. useful to ClickHouse users?
+
+- Parameters: If the feature being added takes arguments, options or is influenced by settings, please list them below with a brief explanation.
+
+- Example use: A query or command.
+-->",fix data race in keeper,"fixes a data race found in https://s3.amazonaws.com/clickhouse-test-reports/json.html?pr=100741&sha=9768ea0b69d2f0f262e72d8b15618ad9cce46439&name_0=pr&name_1=integration%20tests%20%28amd_tsan%2c%202%2f6%29
+https://github.com/clickhouse/clickhouse/pull/100741
+
+[cidb](https://play.clickhouse.com/play?user=play&run=1#v0lusaogicagotagqvmgaw50zxj2ywxfzgf5cwptruxfq1qkicagihrvu3rhcnrpzkrheshjagvja19zdgfydf90aw1lksbbuybkyxksciagicbjb3vudcgpieftigzhawx1cmvzlaogicagz3jvdxbvbmlxqxjyyxkochvsbf9yzxf1zxn0x251bwjlcikgqvmgchjzlaogicagyw55khjlcg9ydf91cmwpieftihjlcg9ydf91cmwkrljptsbjagvja3mkv0hfukugkg5vdygpic0gdg9jbnrlcnzhberheshpbnrlcnzhbf9kyxlzkskgpd0gy2hly2tfc3rhcnrfdgltzqogicagqu5eihrlc3rfbmftzsa9icd0zxn0x2tlzxblcl9zbmfwc2hvdf9jahvua2vkx3ryyw5zzmvyl3rlc3quchk6onrlc3rfcmvjb3zlcl9mcm9tx3nuyxbzag90x3nlbnrfynlfb2xkx2xlywrlcltyzw1vdgvfzglza10nciagicatlsbbtkqgy2hly2tfbmftzsa9icdjbnrlz3jhdglvbib0zxn0cyaoyw1kx3rzyw4sidivniknciagicbbtkqgdgvzdf9zdgf0dxmgsu4gkcdgqulmjywgj0vsuk9sjykkicagieforcaochvsbf9yzxf1zxn0x251bwjlcia9idagt1igymfzzv9yzwygsu4gkcdtyxn0zxinkskkicagieforcb0zxn0x2nvbnrlehrfcmf3iexjs0ugjyvficagrxhjzxb0aw9ujsckr1jpvvagqlkgzgf5ck9srevsiejzigrhesbervndcg==)
+
+### changelog category (leave one):
+- not for changelog (changelog entry is not required)
+
+
+### changelog entry (a [user-readable short description](https://github.com/clickhouse/clickhouse/blob/master/docs/changelog_entry_guidelines.md) of the changes that goes into changelog.md):
+...
+
+### documentation entry for user-facing changes
+
+- [ ] documentation is written (mandatory for new features)
+
+<!---
+directly edit documentation source files in the ""docs"" folder with the same pull-request as code changes
+
+or
+
+add a user-readable short description of the changes that should be added to docs.clickhouse.com below.
+
+at a minimum, the following information should be added (but add more as needed).
+- motivation: why is this function, table engine, etc. useful to clickhouse users?
+
+- parameters: if the feature being added takes arguments, options or is influenced by settings, please list them below with a brief explanation.
+
+- example use: a query or command.
+-->",en,fix race keeper,fixes race found cidb changelog category leave not changelog changelog entry not required changelog entry user readable short description goes changelog.md documentation entry user facing documentation written mandatory features directly edit documentation source docs folder same user readable short description should docs.clickhouse.com below minimum following information should but more needed motivation why table engine etc useful clickhouse users parameters feature being takes arguments options influenced settings please list them below brief explanation example query command,fix race keeper fixes race found cidb changelog category leave not changelog changelog entry not required changelog entry user readable short description goes changelog.md documentation entry user facing documentation written mandatory features directly edit documentation source docs folder same user readable short description should docs.clickhouse.com below minimum following information should but more needed motivation why table engine etc useful clickhouse users parameters feature being takes arguments options influenced settings please list them below brief explanation example query command,5,188,True,True,False,True,True,False,True,True,False,False,False,True,True,False,"[""feature"", ""bug_fix"", ""documentation"", ""testing"", ""configuration"", ""release""]",6,True,0.40576553663662834,0.14796126123635592,0.9758906336740633,0.9370065473651021,0.17020571562633321,0.853616367590879,0.9603369991504789,53.65,High,0.49745928163532455,64.62558680096623,64.1281275193309
+Old score much higher,1184322061,3432623415,True,chore: switch to source-available license,"## Summary
+- Replace MIT license with RTK AI Source-Available License v1.0
+- Free for individuals and teams ≤20 people
+- Enterprise use (>20 personnel) requires commercial license
+- Same license as rtk-ai/icm and rtk-ai/vox
+- Also archived pszymkowiak/grit with redirect to rtk-ai/grit",2026-03-23,2026-03-01,0,0,4,4,52,0,52,0,0,0,False,91.0,"{'Text': 34, 'TOML': 1, 'YAML': 1, 'Markdown': 3}","{'YAML': 1, 'Text': 11, 'Markdown': 1}","['Markdown', 'TOML', 'Text', 'YAML']",False,153602,chore: switch to source-available license,"## Summary
+- Replace MIT license with RTK AI Source-Available License v1.0
+- Free for individuals and teams ≤20 people
+- Enterprise use (>20 personnel) requires commercial license
+- Same license as rtk-ai/icm and rtk-ai/vox
+- Also archived pszymkowiak/grit with redirect to rtk-ai/grit",chore: switch to source-available license,"## summary
+- replace mit license with rtk ai source-available license v1.0
+- free for individuals and teams ≤20 people
+- enterprise use (>20 personnel) requires commercial license
+- same license as rtk-ai/icm and rtk-ai/vox
+- also archived pszymkowiak/grit with redirect to rtk-ai/grit",en,chore switch source available license,summary replace mit license rtk source available license v1.0 free individuals teams people enterprise personnel requires commercial license same license rtk icm rtk vox archived pszymkowiak grit redirect rtk grit,chore switch source available license summary replace mit license rtk source available license v1.0 free individuals teams people enterprise personnel requires commercial license same license rtk icm rtk vox archived pszymkowiak grit redirect rtk grit,6,46,True,True,False,False,False,False,False,False,False,False,False,False,False,False,[],0,False,0.20156813989230432,0.6038507891132777,0.4015011196196058,0.16343644393571136,0.770074514289813,0.04005413923032036,0.306275249346048,34.08,Low,90.32233239514915,14.419445293301484,-75.90288710184767
+Old score much higher,1183994818,3514058001,True,chore(hyperliquid): bump version to 0.2.0,"Bump plugin version to reflect changes landed in #79:
+- New `orders` command
+- Batch `cancel` (`--coin` / `--all`)
+- EIP-712 signing fixes (trigger field order, IOC market orders, price rounding)
+- `prices --coin` rename
+
+🤖 Generated with [Claude Code](https://claude.ai/claude-code)",2026-04-10,2026-04-01,0,0,4,4,12,0,12,6,0,0,False,91.0,"{'JSON': 1, 'TOML': 1, 'YAML': 1, 'Markdown': 3}","{'JSON': 1, 'TOML': 1, 'YAML': 1, 'Markdown': 3}","['JSON', 'Markdown', 'TOML', 'YAML']",False,340347,chore(hyperliquid): bump version to 0.2.0,"Bump plugin version to reflect changes landed in #79:
+- New `orders` command
+- Batch `cancel` (`--coin` / `--all`)
+- EIP-712 signing fixes (trigger field order, IOC market orders, price rounding)
+- `prices --coin` rename
+
+🤖 Generated with [Claude Code](https://claude.ai/claude-code)",chore(hyperliquid): bump version to 0.2.0,"bump plugin version to reflect changes landed in #79:
+- new `orders` command
+- batch `cancel` (`--coin` / `--all`)
+- eip-712 signing fixes (trigger field order, ioc market orders, price rounding)
+- `prices --coin` rename
+
+🤖 generated with [claude code](https://claude.ai/claude-code)",en,chore hyperliquid bump version,bump plugin version reflect landed command batch signing fixes trigger field order ioc market orders price rounding rename generated claude,chore hyperliquid bump version bump plugin version reflect landed command batch signing fixes trigger field order ioc market orders price rounding rename generated claude,8,40,True,True,False,False,False,False,False,False,True,False,False,False,False,False,"[""dependency""]",1,True,0.20156813989230432,0.6038507891132777,0.4015011196196058,0.16343644393571136,0.6154575497179097,0.16151549498244547,0.306275249346048,34.36,Low,90.32233239514915,14.901886654298673,-75.42044574085047
+Old score much higher,193124653,3444204648,True,chore: Remove helm from examples validation,"This workflow doesn't use helm. I guess is some left over from previous versions where dapr was installed using helm.
+
+Also fixes the CI by filtering `cloudevents < 2.0.0`, which just got released and it breaks the grpc extension.",2026-03-25,2026-03-01,0,0,2,2,3,0,3,105,1,0,False,83.0,{'INI': 1},"{'YAML': 1, 'HAProxy': 1}","['HAProxy', 'INI', 'YAML']",True,19142,chore: Remove helm from examples validation,"This workflow doesn't use helm. I guess is some left over from previous versions where dapr was installed using helm.
+
+Also fixes the CI by filtering `cloudevents < 2.0.0`, which just got released and it breaks the grpc extension.",chore: remove helm from examples validation,"this workflow doesn't use helm. i guess is some left over from previous versions where dapr was installed using helm.
+
+also fixes the ci by filtering `cloudevents < 2.0.0`, which just got released and it breaks the grpc extension.",en,chore helm examples validation,workflow doesn helm guess some left over previous versions where dapr installed helm fixes filtering which just got released breaks grpc extension,chore helm examples validation workflow doesn helm guess some left over previous versions where dapr installed helm fixes filtering which just got released breaks grpc extension,6,41,True,True,False,False,False,False,False,False,False,False,False,False,False,False,[],0,False,0.20156813989230432,0.38977929633943786,0.4015011196196058,0.5285299398311866,0.4554509448214698,0.04005413923032036,0.45231264770423807,30.31,Low,81.79084594228486,7.934094490365743,-73.85675145191912
+Both scores high,1250234317,4532172232,True,feat(enrollment): standalone single-use site-token enrollment service,"
+[Design doc:](https://docs.google.com/document/d/1B8ym7zaGtbmHER7jF1Z2xWKo8h8HKYvvO0lCM-hjF0o/edit?tab=t.0)
+
+## Summary
+
+Enrollment is one synchronous exchange. A grid-admin mints a single-use token that pins a site name, and a site redeems it with a certificate signing request to receive a signed certificate, the grid CA certificate, and an enrollment id in the same response. The flow has no approval queue and no request lifecycle. The grid, not the requester, assigns the member name.
+
+## Motivation
+
+Before this, a requester could POST a CSR and ask for another site's name in the body, receiving a certificate for it if an operator approved. Pinning the name at mint and gating enrollment behind the token closes that: no unauthenticated party can enroll, and the name comes only from the grid-admin's pin. Collapsing the approval lifecycle into a single redeem also removes the queue, the phases, and the joining kit, so the grant is identity only.
+
+## What changed
+
+- Three flat endpoints. `POST /v1alpha1/enrollmenttokens` (grid-admin) mints a one-time 256-bit token from the system CSPRNG, stores only its digest, and returns the token once. `DELETE /v1alpha1/enrollmenttokens/{id}` revokes one that leaked. `POST /v1alpha1/enrollments` (site) redeems a token and a CSR. Both credentials ride in `Authorization: Bearer`, and the RBAC resource name equals the URL segment.
+- The enroll body carries only the CSR. The token is validated before any CSR crypto, the CSR is verified for possession of the key, and the token is redeemed and the certificate signed and recorded in one transaction stamped with the pinned name. A failed sign or insert rolls the redeem back, so the token is spent if and only if the certificate is issued.
+- The response returns the signed certificate, the grid CA certificate, and an enrollment id. The certs primitive rebuilds every SAN from the pinned name, so a CSR cannot assert a name of its own. The grid CA is not served from its own endpoint.
+- The service terminates TLS in-process (axum-server with rustls) and refuses to start without TLS material, so a CA-signing endpoint never serves in the clear. The server certificate reloads from disk on an interval, so a rotated secret is served without a restart.
+- The Postgres connection must require TLS. A connection string whose sslmode permits a plaintext fallback (disable, allow, prefer) is refused at startup.
+- On SIGINT or SIGTERM the service drains in-flight requests before it exits, and a per-request timeout bounds handler and body-read time.
+- Token authorization is a write verb on a distinct RBAC resource, so a read-only grid-admin cannot mint or revoke. The resource is derived from the matched route and fails closed for any route added later.
+- A Postgres advisory lock serializes schema application, so two instances starting at once do not race on the table's implicit type.
+
+Coverage: the HTTP flow end to end plus its security properties, the mint-to-issued lifecycle, and concurrent redeem and same-name races against a real Postgres.
+
+The `api/enrollment-v1alpha1.yaml` spec still describes the earlier lifecycle design and is rewritten in a follow-up. The deploy README describes the shipped endpoints meanwhile.
+
+This is the single enrollment PR. The earlier split (#151 service core, #152 wire-type codegen) is folded into it and those PRs are closed.
+
+Part of #150.
+",2026-09-15,2026-09-01,22,0,38,60,5123,3953,1170,1115,3,12,True,99.0,"{'SQL': 53, 'Dockerfile': 81, 'Makefile': 13, 'TOML': 1006, 'OASv3-yaml': 270, 'Markdown': 71, 'YAML': 58, 'Rust': 3530}","{'Dockerfile': 2, 'TOML': 35, 'Rust': 4}","['Dockerfile', 'Makefile', 'Markdown', 'OASv3-yaml', 'Rust', 'SQL', 'TOML', 'YAML']",False,1295473,feat(enrollment): standalone single-use site-token enrollment service,"[Design doc:](https://docs.google.com/document/d/1B8ym7zaGtbmHER7jF1Z2xWKo8h8HKYvvO0lCM-hjF0o/edit?tab=t.0)
+
+## Summary
+
+Enrollment is one synchronous exchange. A grid-admin mints a single-use token that pins a site name, and a site redeems it with a certificate signing request to receive a signed certificate, the grid CA certificate, and an enrollment id in the same response. The flow has no approval queue and no request lifecycle. The grid, not the requester, assigns the member name.
+
+## Motivation
+
+Before this, a requester could POST a CSR and ask for another site's name in the body, receiving a certificate for it if an operator approved. Pinning the name at mint and gating enrollment behind the token closes that: no unauthenticated party can enroll, and the name comes only from the grid-admin's pin. Collapsing the approval lifecycle into a single redeem also removes the queue, the phases, and the joining kit, so the grant is identity only.
+
+## What changed
+
+- Three flat endpoints. `POST /v1alpha1/enrollmenttokens` (grid-admin) mints a one-time 256-bit token from the system CSPRNG, stores only its digest, and returns the token once. `DELETE /v1alpha1/enrollmenttokens/{id}` revokes one that leaked. `POST /v1alpha1/enrollments` (site) redeems a token and a CSR. Both credentials ride in `Authorization: Bearer`, and the RBAC resource name equals the URL segment.
+- The enroll body carries only the CSR. The token is validated before any CSR crypto, the CSR is verified for possession of the key, and the token is redeemed and the certificate signed and recorded in one transaction stamped with the pinned name. A failed sign or insert rolls the redeem back, so the token is spent if and only if the certificate is issued.
+- The response returns the signed certificate, the grid CA certificate, and an enrollment id. The certs primitive rebuilds every SAN from the pinned name, so a CSR cannot assert a name of its own. The grid CA is not served from its own endpoint.
+- The service terminates TLS in-process (axum-server with rustls) and refuses to start without TLS material, so a CA-signing endpoint never serves in the clear. The server certificate reloads from disk on an interval, so a rotated secret is served without a restart.
+- The Postgres connection must require TLS. A connection string whose sslmode permits a plaintext fallback (disable, allow, prefer) is refused at startup.
+- On SIGINT or SIGTERM the service drains in-flight requests before it exits, and a per-request timeout bounds handler and body-read time.
+- Token authorization is a write verb on a distinct RBAC resource, so a read-only grid-admin cannot mint or revoke. The resource is derived from the matched route and fails closed for any route added later.
+- A Postgres advisory lock serializes schema application, so two instances starting at once do not race on the table's implicit type.
+
+Coverage: the HTTP flow end to end plus its security properties, the mint-to-issued lifecycle, and concurrent redeem and same-name races against a real Postgres.
+
+The `api/enrollment-v1alpha1.yaml` spec still describes the earlier lifecycle design and is rewritten in a follow-up. The deploy README describes the shipped endpoints meanwhile.
+
+This is the single enrollment PR. The earlier split (#151 service core, #152 wire-type codegen) is folded into it and those PRs are closed.
+
+Part of #150.",feat(enrollment): standalone single-use site-token enrollment service,"[design doc:](https://docs.google.com/document/d/1b8ym7zagtbmher7jf1z2xwko8h8hkyvvo0lcm-hjf0o/edit?tab=t.0)
+
+## summary
+
+enrollment is one synchronous exchange. a grid-admin mints a single-use token that pins a site name, and a site redeems it with a certificate signing request to receive a signed certificate, the grid ca certificate, and an enrollment id in the same response. the flow has no approval queue and no request lifecycle. the grid, not the requester, assigns the member name.
+
+## motivation
+
+before this, a requester could post a csr and ask for another site's name in the body, receiving a certificate for it if an operator approved. pinning the name at mint and gating enrollment behind the token closes that: no unauthenticated party can enroll, and the name comes only from the grid-admin's pin. collapsing the approval lifecycle into a single redeem also removes the queue, the phases, and the joining kit, so the grant is identity only.
+
+## what changed
+
+- three flat endpoints. `post /v1alpha1/enrollmenttokens` (grid-admin) mints a one-time 256-bit token from the system csprng, stores only its digest, and returns the token once. `delete /v1alpha1/enrollmenttokens/{id}` revokes one that leaked. `post /v1alpha1/enrollments` (site) redeems a token and a csr. both credentials ride in `authorization: bearer`, and the rbac resource name equals the url segment.
+- the enroll body carries only the csr. the token is validated before any csr crypto, the csr is verified for possession of the key, and the token is redeemed and the certificate signed and recorded in one transaction stamped with the pinned name. a failed sign or insert rolls the redeem back, so the token is spent if and only if the certificate is issued.
+- the response returns the signed certificate, the grid ca certificate, and an enrollment id. the certs primitive rebuilds every san from the pinned name, so a csr cannot assert a name of its own. the grid ca is not served from its own endpoint.
+- the service terminates tls in-process (axum-server with rustls) and refuses to start without tls material, so a ca-signing endpoint never serves in the clear. the server certificate reloads from disk on an interval, so a rotated secret is served without a restart.
+- the postgres connection must require tls. a connection string whose sslmode permits a plaintext fallback (disable, allow, prefer) is refused at startup.
+- on sigint or sigterm the service drains in-flight requests before it exits, and a per-request timeout bounds handler and body-read time.
+- token authorization is a write verb on a distinct rbac resource, so a read-only grid-admin cannot mint or revoke. the resource is derived from the matched route and fails closed for any route added later.
+- a postgres advisory lock serializes schema application, so two instances starting at once do not race on the table's implicit type.
+
+coverage: the http flow end to end plus its security properties, the mint-to-issued lifecycle, and concurrent redeem and same-name races against a real postgres.
+
+the `api/enrollment-v1alpha1.yaml` spec still describes the earlier lifecycle design and is rewritten in a follow-up. the deploy readme describes the shipped endpoints meanwhile.
+
+this is the single enrollment pr. the earlier split (#151 service core, #152 wire-type codegen) is folded into it and those prs are closed.
+
+part of #150.",en,feat enrollment standalone single site token enrollment,design doc summary enrollment synchronous exchange grid admin mints single token pins site name site redeems certificate signing receive signed certificate grid certificate enrollment same response flow approval queue lifecycle grid not requester assigns member name motivation before requester could post csr ask another site name body receiving certificate operator approved pinning name mint gating enrollment behind token closes unauthenticated party can enroll name comes only grid admin pin collapsing approval lifecycle single redeem removes queue phases joining kit grant identity only what changed three flat endpoints grid admin mints time bit token system csprng stores only digest returns token once revokes leaked site redeems token csr credentials ride rbac resource name equals segment enroll body carries only csr token validated before any csr crypto csr verified possession key token redeemed certificate signed recorded transaction stamped pinned name failed sign insert rolls redeem back token spent only certificate issued response returns signed certificate grid certificate enrollment certs primitive rebuilds every san pinned name csr cannot assert name own grid not served own endpoint terminates tls process axum server rustls refuses start tls material signing endpoint never serves clear server certificate reloads disk interval rotated secret served restart postgres connection must require tls connection string whose sslmode permits plaintext fallback disable allow prefer refused startup sigint sigterm drains flight requests before exits per timeout bounds handler body read time token authorization write verb distinct rbac resource read only grid admin cannot mint revoke resource derived matched route fails closed any route later postgres advisory lock serializes schema application instances starting once not race table implicit coverage flow end end plus security properties mint issued lifecycle concurrent redeem same name races against real postgres still describes earlier lifecycle design rewritten follow deploy readme describes shipped endpoints meanwhile single enrollment earlier split core wire codegen folded those prs closed part,feat enrollment standalone single site token enrollment design doc summary enrollment synchronous exchange grid admin mints single token pins site name site redeems certificate signing receive signed certificate grid certificate enrollment same response flow approval queue lifecycle grid not requester assigns member name motivation before requester could post csr ask another site name body receiving certificate operator approved pinning name mint gating enrollment behind token closes unauthenticated party can enroll name comes only grid admin pin collapsing approval lifecycle single redeem removes queue phases joining kit grant identity only what changed three flat endpoints grid admin mints time bit token system csprng stores only digest returns token once revokes leaked site redeems token csr credentials ride rbac resource name equals segment enroll body carries only csr token validated before any csr crypto csr verified possession key token redeemed certificate signed recorded transaction stamped pinned name failed sign insert rolls redeem back token spent only certificate issued response returns signed certificate grid certificate enrollment certs primitive rebuilds every san pinned name csr cannot assert name own grid not served own endpoint terminates tls process axum server rustls refuses start tls material signing endpoint never serves clear server certificate reloads disk interval rotated secret served restart postgres connection must require tls connection string whose sslmode permits plaintext fallback disable allow prefer refused startup sigint sigterm drains flight requests before exits per timeout bounds handler body read time token authorization write verb distinct rbac resource read only grid admin cannot mint revoke resource derived matched route fails closed any route later postgres advisory lock serializes schema application instances starting once not race table implicit coverage flow end end plus security properties mint issued lifecycle concurrent redeem same name races against real postgres still describes earlier lifecycle design rewritten follow deploy readme describes shipped endpoints meanwhile single enrollment earlier split core wire codegen folded those prs closed part,9,564,True,True,False,False,False,False,True,False,False,True,False,True,False,False,"[""documentation"", ""security"", ""configuration""]",3,True,0.985420288837202,0.970695628589638,0.9730734660240092,0.9370065473651021,0.9819213374765858,0.4728679969605522,0.9586466985604465,89.85,Very High,99.0063142511101,99.12048033436915,0.11416608325905031
+Both scores high,476820102,4615540504,True,feat(python): emit PEP 639 license metadata in generated pyproject.toml,"## Description
+`metadata.license: { custom: ""./LICENSE"" }` already works for the Java SDK generator (name extracted from the file into the POM `licenses` block). The Python generator accepted the same config and copied the LICENSE file into the repo, but wrote nothing about it into `pyproject.toml`.
+
+License metadata is now emitted in the `[project]` table following [PEP 639](https://peps.python.org/pep-0639/) (the form the requesting customer asked for):
+
+```toml
+# metadata.license: ""Apache-2.0""
+[project]
+license = ""Apache-2.0""
+
+# metadata.license: { custom: ""./LICENSE"" }  (unrecognized text)
+[project]
+license-files = [""LICENSE""]
+
+# metadata.license: { custom: ""./LICENSE"" }  (file contains Apache-2.0 / MIT / BSD / GPL / MPL / ISC text)
+[project]
+license = ""Apache-2.0""
+license-files = [""LICENSE""]
+```
+
+The `license = ""MIT""` / `""Apache-2.0""` line moves from `[tool.poetry]` to `[project]` (poetry-core ≥2.0 reads it as a license expression; the generated `[project]` table already requires poetry-core 2.x). The `License :: OSI Approved :: ...` classifiers for MIT/Apache are unchanged.
+
+For custom files, the generator reads the license text (from `<output>/<filename>` or the `/tmp/LICENSE` mount used by local generation) and applies the same substring heuristics as the Java generator (`GeneratedBuildGradle`). A recognized license additionally gets `license = ""<SPDX>""` and the matching PyPI classifier; unrecognized text stays file-only with no guessed classifier (the file could be proprietary, etc.). This gives Java parity from a single config key: `custom: ./LICENSE` with Apache text → id + file in both generators.
+
+Resulting sdist metadata (poetry-core 2.5): `License-Expression: Apache-2.0` for basic licenses; `License-File: LICENSE` (and the file packaged) for custom, plus `License-Expression` when recognized.
+
+## Changes Made
+- `license_detector.py` (new): `detect_spdx_license(content)` / `detect_spdx_license_from_file(*paths)` mirroring Java's patterns (Apache-2.0, MIT, BSD-3/2-Clause, GPL-3.0/2.0-only, MPL-2.0, ISC) + `SPDX_CLASSIFIERS` map
+- `pyproject_toml.py`: `_get_project_license()` emits `license = ""<SPDX>""` for `BasicLicense`; for `CustomLicense` emits `license-files = [""<filename>""]` (TOML-escaped) preceded by `license = ""<detected SPDX>""` when recognized; the `[tool.poetry]` `license` line is removed
+- `pypi_classifier_creator.py`: `create_classifiers(..., detected_spdx_license=)` adds the classifier for a recognized custom license
+- Seed: new `exhaustive/custom-license` output folder for `python-sdk` (mirrors the existing Java fixture) + generated snapshot (fixture LICENSE is unrecognized → file-only)
+- Changelog entry in `generators/python/sdk/changes/unreleased/`
+- [ ] Updated README.md generator (not applicable)
+
+## Testing
+- [x] Unit tests added/updated — `test_license_detector.py` (each pattern, unknown text, file fallback), `test_pyproject_toml.py::test_custom_license_written_to_project_table` / `test_recognized_custom_license_adds_expression_and_classifier` / `test_basic_license_written_to_project_table` (assert the TOML and that poetry-core parses `license_files` / `license_expression`), `test_pypi_classifier_creator.py`
+- [x] Manual testing completed — `poetry run pytest tests/codegen` (50 passed), `mypy`, `pre-commit` on changed files; `pnpm seed test --generator python-sdk --fixture exhaustive --outputFolder custom-license` (unchanged, file-only) and the same fixture with an Apache-2.0 LICENSE swapped in → `license = ""Apache-2.0""` + `license-files = [""LICENSE""]` + Apache classifier; earlier: built the generator image from this branch and ran `fern generate --local` on a dummy OpenAPI spec with `license_header` + custom LICENSE (and separately `Apache-2.0`) + pypi output, then `python -m build --sdist` → PKG-INFO shows `License-File: LICENSE` / `License-Expression: Apache-2.0`.
+
+Link to Devin session: https://app.devin.ai/sessions/96b145b153d949008c2866b8b9a10bd0
+Open in Devin Desktop: https://app.devin.ai/desktop/session/96b145b153d949008c2866b8b9a10bd0?variant=devin
+Requested by: @adidavid014",2026-09-23,2026-09-01,157,0,162,319,19723,18350,1373,142,3,7,True,100.0,"{'TOML': 102, 'Text': 37, 'JSON': 833, 'Python': 18332, 'YAML': 57, 'Markdown': 335, 'Pip Requirements': 4, 'Ignore List': 5}",{'Python': 18},"['Ignore List', 'JSON', 'Markdown', 'Pip Requirements', 'Python', 'TOML', 'Text', 'YAML']",False,1263445,feat(python): emit PEP 639 license metadata in generated pyproject.toml,"## Description
+`metadata.license: { custom: ""./LICENSE"" }` already works for the Java SDK generator (name extracted from the file into the POM `licenses` block). The Python generator accepted the same config and copied the LICENSE file into the repo, but wrote nothing about it into `pyproject.toml`.
+
+License metadata is now emitted in the `[project]` table following [PEP 639](https://peps.python.org/pep-0639/) (the form the requesting customer asked for):
+
+```toml
+# metadata.license: ""Apache-2.0""
+[project]
+license = ""Apache-2.0""
+
+# metadata.license: { custom: ""./LICENSE"" }  (unrecognized text)
+[project]
+license-files = [""LICENSE""]
+
+# metadata.license: { custom: ""./LICENSE"" }  (file contains Apache-2.0 / MIT / BSD / GPL / MPL / ISC text)
+[project]
+license = ""Apache-2.0""
+license-files = [""LICENSE""]
+```
+
+The `license = ""MIT""` / `""Apache-2.0""` line moves from `[tool.poetry]` to `[project]` (poetry-core ≥2.0 reads it as a license expression; the generated `[project]` table already requires poetry-core 2.x). The `License :: OSI Approved :: ...` classifiers for MIT/Apache are unchanged.
+
+For custom files, the generator reads the license text (from `<output>/<filename>` or the `/tmp/LICENSE` mount used by local generation) and applies the same substring heuristics as the Java generator (`GeneratedBuildGradle`). A recognized license additionally gets `license = ""<SPDX>""` and the matching PyPI classifier; unrecognized text stays file-only with no guessed classifier (the file could be proprietary, etc.). This gives Java parity from a single config key: `custom: ./LICENSE` with Apache text → id + file in both generators.
+
+Resulting sdist metadata (poetry-core 2.5): `License-Expression: Apache-2.0` for basic licenses; `License-File: LICENSE` (and the file packaged) for custom, plus `License-Expression` when recognized.
+
+## Changes Made
+- `license_detector.py` (new): `detect_spdx_license(content)` / `detect_spdx_license_from_file(*paths)` mirroring Java's patterns (Apache-2.0, MIT, BSD-3/2-Clause, GPL-3.0/2.0-only, MPL-2.0, ISC) + `SPDX_CLASSIFIERS` map
+- `pyproject_toml.py`: `_get_project_license()` emits `license = ""<SPDX>""` for `BasicLicense`; for `CustomLicense` emits `license-files = [""<filename>""]` (TOML-escaped) preceded by `license = ""<detected SPDX>""` when recognized; the `[tool.poetry]` `license` line is removed
+- `pypi_classifier_creator.py`: `create_classifiers(..., detected_spdx_license=)` adds the classifier for a recognized custom license
+- Seed: new `exhaustive/custom-license` output folder for `python-sdk` (mirrors the existing Java fixture) + generated snapshot (fixture LICENSE is unrecognized → file-only)
+- Changelog entry in `generators/python/sdk/changes/unreleased/`
+- [ ] Updated README.md generator (not applicable)
+
+## Testing
+- [x] Unit tests added/updated — `test_license_detector.py` (each pattern, unknown text, file fallback), `test_pyproject_toml.py::test_custom_license_written_to_project_table` / `test_recognized_custom_license_adds_expression_and_classifier` / `test_basic_license_written_to_project_table` (assert the TOML and that poetry-core parses `license_files` / `license_expression`), `test_pypi_classifier_creator.py`
+- [x] Manual testing completed — `poetry run pytest tests/codegen` (50 passed), `mypy`, `pre-commit` on changed files; `pnpm seed test --generator python-sdk --fixture exhaustive --outputFolder custom-license` (unchanged, file-only) and the same fixture with an Apache-2.0 LICENSE swapped in → `license = ""Apache-2.0""` + `license-files = [""LICENSE""]` + Apache classifier; earlier: built the generator image from this branch and ran `fern generate --local` on a dummy OpenAPI spec with `license_header` + custom LICENSE (and separately `Apache-2.0`) + pypi output, then `python -m build --sdist` → PKG-INFO shows `License-File: LICENSE` / `License-Expression: Apache-2.0`.
+
+Link to Devin session: https://app.devin.ai/sessions/96b145b153d949008c2866b8b9a10bd0
+Open in Devin Desktop: https://app.devin.ai/desktop/session/96b145b153d949008c2866b8b9a10bd0?variant=devin
+Requested by: @adidavid014",feat(python): emit pep 639 license metadata in generated pyproject.toml,"## description
+`metadata.license: { custom: ""./license"" }` already works for the java sdk generator (name extracted from the file into the pom `licenses` block). the python generator accepted the same config and copied the license file into the repo, but wrote nothing about it into `pyproject.toml`.
+
+license metadata is now emitted in the `[project]` table following [pep 639](https://peps.python.org/pep-0639/) (the form the requesting customer asked for):
+
+```toml
+# metadata.license: ""apache-2.0""
+[project]
+license = ""apache-2.0""
+
+# metadata.license: { custom: ""./license"" }  (unrecognized text)
+[project]
+license-files = [""license""]
+
+# metadata.license: { custom: ""./license"" }  (file contains apache-2.0 / mit / bsd / gpl / mpl / isc text)
+[project]
+license = ""apache-2.0""
+license-files = [""license""]
+```
+
+the `license = ""mit""` / `""apache-2.0""` line moves from `[tool.poetry]` to `[project]` (poetry-core ≥2.0 reads it as a license expression; the generated `[project]` table already requires poetry-core 2.x). the `license :: osi approved :: ...` classifiers for mit/apache are unchanged.
+
+for custom files, the generator reads the license text (from `<output>/<filename>` or the `/tmp/license` mount used by local generation) and applies the same substring heuristics as the java generator (`generatedbuildgradle`). a recognized license additionally gets `license = ""<spdx>""` and the matching pypi classifier; unrecognized text stays file-only with no guessed classifier (the file could be proprietary, etc.). this gives java parity from a single config key: `custom: ./license` with apache text → id + file in both generators.
+
+resulting sdist metadata (poetry-core 2.5): `license-expression: apache-2.0` for basic licenses; `license-file: license` (and the file packaged) for custom, plus `license-expression` when recognized.
+
+## changes made
+- `license_detector.py` (new): `detect_spdx_license(content)` / `detect_spdx_license_from_file(*paths)` mirroring java's patterns (apache-2.0, mit, bsd-3/2-clause, gpl-3.0/2.0-only, mpl-2.0, isc) + `spdx_classifiers` map
+- `pyproject_toml.py`: `_get_project_license()` emits `license = ""<spdx>""` for `basiclicense`; for `customlicense` emits `license-files = [""<filename>""]` (toml-escaped) preceded by `license = ""<detected spdx>""` when recognized; the `[tool.poetry]` `license` line is removed
+- `pypi_classifier_creator.py`: `create_classifiers(..., detected_spdx_license=)` adds the classifier for a recognized custom license
+- seed: new `exhaustive/custom-license` output folder for `python-sdk` (mirrors the existing java fixture) + generated snapshot (fixture license is unrecognized → file-only)
+- changelog entry in `generators/python/sdk/changes/unreleased/`
+- [ ] updated readme.md generator (not applicable)
+
+## testing
+- [x] unit tests added/updated — `test_license_detector.py` (each pattern, unknown text, file fallback), `test_pyproject_toml.py::test_custom_license_written_to_project_table` / `test_recognized_custom_license_adds_expression_and_classifier` / `test_basic_license_written_to_project_table` (assert the toml and that poetry-core parses `license_files` / `license_expression`), `test_pypi_classifier_creator.py`
+- [x] manual testing completed — `poetry run pytest tests/codegen` (50 passed), `mypy`, `pre-commit` on changed files; `pnpm seed test --generator python-sdk --fixture exhaustive --outputfolder custom-license` (unchanged, file-only) and the same fixture with an apache-2.0 license swapped in → `license = ""apache-2.0""` + `license-files = [""license""]` + apache classifier; earlier: built the generator image from this branch and ran `fern generate --local` on a dummy openapi spec with `license_header` + custom license (and separately `apache-2.0`) + pypi output, then `python -m build --sdist` → pkg-info shows `license-file: license` / `license-expression: apache-2.0`.
+
+link to devin session: https://app.devin.ai/sessions/96b145b153d949008c2866b8b9a10bd0
+open in devin desktop: https://app.devin.ai/desktop/session/96b145b153d949008c2866b8b9a10bd0?variant=devin
+requested by: @adidavid014",en,feat python emit pep license metadata generated pyproject.toml,description already works java sdk generator name extracted pom block python generator accepted same config copied license repo but wrote nothing about license metadata now emitted table following pep form requesting customer asked line moves poetry core reads license expression generated table already requires poetry core classifiers mit apache unchanged custom generator reads license text mount local generation applies same substring heuristics java generator recognized license additionally gets matching pypi classifier unrecognized text stays only guessed classifier could proprietary etc gives java parity single config key apache text generators resulting sdist metadata poetry core basic licenses packaged custom plus when recognized mirroring java patterns apache mit clause only isc map emits emits toml escaped preceded when recognized line adds classifier recognized custom license seed output folder mirrors existing java fixture generated snapshot fixture license unrecognized only changelog entry readme.md generator not applicable testing unit each pattern unknown text fallback assert toml poetry core parses manual testing completed passed changed unchanged only same fixture apache license swapped apache classifier earlier built generator image ran dummy openapi custom license separately pypi output then pkg info shows link devin session open devin desktop requested adidavid014,feat python emit pep license metadata generated pyproject.toml description already works java sdk generator name extracted pom block python generator accepted same config copied license repo but wrote nothing about license metadata now emitted table following pep form requesting customer asked line moves poetry core reads license expression generated table already requires poetry core classifiers mit apache unchanged custom generator reads license text mount local generation applies same substring heuristics java generator recognized license additionally gets matching pypi classifier unrecognized text stays only guessed classifier could proprietary etc gives java parity single config key apache text generators resulting sdist metadata poetry core basic licenses packaged custom plus when recognized mirroring java patterns apache mit clause only isc map emits emits toml escaped preceded when recognized line adds classifier recognized custom license seed output folder mirrors existing java fixture generated snapshot fixture license unrecognized only changelog entry readme.md generator not applicable testing unit each pattern unknown text fallback assert toml poetry core parses manual testing completed passed changed unchanged only same fixture apache license swapped apache classifier earlier built generator image ran dummy openapi custom license separately pypi output then pkg info shows link devin session open devin desktop requested adidavid014,11,530,True,True,False,False,False,False,True,True,False,False,False,True,True,False,"[""documentation"", ""testing"", ""configuration"", ""release""]",4,True,0.9995853260719321,0.9961551134525453,0.9490709436110703,0.9370065473651021,0.9849454685105585,0.6256712300723027,0.944245185112683,92.75,Very High,99.75108356912466,99.63209830237723,-0.11898526674742982
+Both scores high,1040076864,4549144326,True,fix: resolve v0.5.1 release build failure,"## Summary
+- Bump Go in Dockerfile from 1.26.0 to 1.26.4 to match go.mod requirement (was causing image build failure)
+- Bump greenhouse and greenhouse/api dependencies from v0.14.0 to v0.16.1
+- Regenerate files with go-makefile-maker (updates CI Go version to 1.27.1)
+
+## Test plan
+- [ ] `gmake check` passes
+- [ ] After merge, retag v0.5.1 and verify `Container Registry GHCR` workflow builds and pushes the image successfully",2026-09-16,2026-09-01,0,0,13,13,359,277,82,17,3,2,True,99.0,"{'JSON': 1, 'JSON5': 10, 'TOML': 4, 'Makefile': 1, 'YAML': 30, 'Go': 2, 'Go Checksums': 92, 'Nix': 1, 'Go Module': 42, 'Dockerfile': 1}","{'Makefile': 1, 'JSON5': 6, 'Dockerfile': 1, 'TOML': 1, 'YAML': 30, 'Go': 1, 'Go Checksums': 90, 'Nix': 1, 'Go Module': 44}","['Dockerfile', 'Go', 'Go Checksums', 'Go Module', 'JSON', 'JSON5', 'Makefile', 'Nix', 'TOML', 'YAML']",False,1366847,fix: resolve v0.5.1 release build failure,"## Summary
+- Bump Go in Dockerfile from 1.26.0 to 1.26.4 to match go.mod requirement (was causing image build failure)
+- Bump greenhouse and greenhouse/api dependencies from v0.14.0 to v0.16.1
+- Regenerate files with go-makefile-maker (updates CI Go version to 1.27.1)
+
+## Test plan
+- [ ] `gmake check` passes
+- [ ] After merge, retag v0.5.1 and verify `Container Registry GHCR` workflow builds and pushes the image successfully",fix: resolve v0.5.1 release build failure,"## summary
+- bump go in dockerfile from 1.26.0 to 1.26.4 to match go.mod requirement (was causing image build failure)
+- bump greenhouse and greenhouse/api dependencies from v0.14.0 to v0.16.1
+- regenerate files with go-makefile-maker (updates ci go version to 1.27.1)
+
+## test plan
+- [ ] `gmake check` passes
+- [ ] after merge, retag v0.5.1 and verify `container registry ghcr` workflow builds and pushes the image successfully",en,fix resolve v0.5.1 release build failure,summary bump dockerfile match go.mod requirement causing image build failure bump greenhouse greenhouse dependencies v0.14.0 v0.16.1 regenerate makefile maker version plan passes after retag v0.5.1 verify workflow builds pushes image successfully,fix resolve v0.5.1 release build failure summary bump dockerfile match go.mod requirement causing image build failure bump greenhouse greenhouse dependencies v0.14.0 v0.16.1 regenerate makefile maker version plan passes after retag v0.5.1 verify workflow builds pushes image successfully,8,74,True,True,False,False,True,False,False,True,True,False,False,False,True,False,"[""bug_fix"", ""testing"", ""dependency"", ""release""]",4,True,0.8294711375738661,0.8567350143940419,0.8634235927797423,0.9370065473651021,0.8168620615196791,0.6256712300723027,0.8928567746138862,81.89,Very High,99.0063142511101,96.38000868200189,-2.6263055691082116
+Both scores low,662724564,4622521311,True,chore(deps): update odh-autorag-v3-6 to 61e15af,"Image created from 'https://github.com/red-hat-data-services/pipelines-components?rev=ac1227fb766e788a0ff7fa93135250d73ac4101c'
+
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| quay.io/rhoai/odh-autorag-rhel9 | digest | `73dabcb` -> `61e15af` |
+
+---
+
+### Configuration
+
+📅 **Schedule**: Branch creation - At any time (no schedule defined), Automerge - At any time (no schedule defined).
+
+🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.
+
+♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.
+
+👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.
+
+---
+
+ - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box
+
+---
+
+To execute skipped test pipelines write comment `/ok-to-test`
+This is Konflux nudging PR, not Mintmaker.
+<!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0Mi4yNi41LXJwbSIsInVwZGF0ZWRJblZlciI6IjQyLjI2LjUtcnBtIiwidGFyZ2V0QnJhbmNoIjoicmhvYWktMy42IiwibGFiZWxzIjpbImtvbmZsdXgtbnVkZ2UiXX0=-->
+",2026-09-24,2026-09-01,0,0,1,1,2,0,2,0,0,0,False,2.0,{'YAML': 1},{'YAML': 1},['YAML'],False,1257377,chore(deps): update odh-autorag-v3-6 to 61e15af,"Image created from 'https://github.com/red-hat-data-services/pipelines-components?rev=ac1227fb766e788a0ff7fa93135250d73ac4101c'
+
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| quay.io/rhoai/odh-autorag-rhel9 | digest | `73dabcb` -> `61e15af` |
+
+---
+
+### Configuration
+
+📅 **Schedule**: Branch creation - At any time (no schedule defined), Automerge - At any time (no schedule defined).
+
+🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.
+
+♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.
+
+👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.
+
+---
+
+ - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box
+
+---
+
+To execute skipped test pipelines write comment `/ok-to-test`
+This is Konflux nudging PR, not Mintmaker.
+<!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0Mi4yNi41LXJwbSIsInVwZGF0ZWRJblZlciI6IjQyLjI2LjUtcnBtIiwidGFyZ2V0QnJhbmNoIjoicmhvYWktMy42IiwibGFiZWxzIjpbImtvbmZsdXgtbnVkZ2UiXX0=-->",chore(deps): update odh-autorag-v3-6 to 61e15af,"image created from 'https://github.com/red-hat-data-services/pipelines-components?rev=ac1227fb766e788a0ff7fa93135250d73ac4101c'
+
+this pr contains the following updates:
+
+| package | update | change |
+|---|---|---|
+| quay.io/rhoai/odh-autorag-rhel9 | digest | `73dabcb` -> `61e15af` |
+
+---
+
+### configuration
+
+📅 **schedule**: branch creation - at any time (no schedule defined), automerge - at any time (no schedule defined).
+
+🚦 **automerge**: disabled by config. please merge this manually once you are satisfied.
+
+♻ **rebasing**: whenever pr is behind base branch, or you tick the rebase/retry checkbox.
+
+👻 **immortal**: this pr will be recreated if closed unmerged. get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.
+
+---
+
+ - [ ] <!-- rebase-check -->if you want to rebase/retry this pr, check this box
+
+---
+
+to execute skipped test pipelines write comment `/ok-to-test`
+this is konflux nudging pr, not mintmaker.
+<!--renovate-debug:eyjjcmvhdgvksw5wzxiioii0mi4yni41lxjwbsisinvwzgf0zwrjblzlcii6ijqylji2ljutcnbtiiwidgfyz2v0qnjhbmnoijoicmhvywktmy42iiwibgfizwxzijpbimtvbmzsdxgtbnvkz2uixx0=-->",en,chore deps odh autorag e15af,image created contains following package quay.io rhoai odh autorag rhel9 digest configuration schedule creation any time schedule defined automerge any time schedule defined automerge disabled config please manually once satisfied rebasing whenever behind base tick rebase retry checkbox immortal recreated closed unmerged config help undesired rebase check want rebase retry check box execute skipped pipelines write comment konflux nudging not mintmaker renovate debug eyjjcmvhdgvksw5wzxiioii0mi4yni41lxjwbsisinvwzgf0zwrjblzlcii6ijqylji2ljutcnbtiiwidgfyz2v0qnjhbmnoijoicmhvywktmy42iiwibgfizwxzijpbimtvbmzsdxgtbnvkz2uixx0,chore deps odh autorag e15af image created contains following package quay.io rhoai odh autorag rhel9 digest configuration schedule creation any time schedule defined automerge any time schedule defined automerge disabled config please manually once satisfied rebasing whenever behind base tick rebase retry checkbox immortal recreated closed unmerged config help undesired rebase check want rebase retry check box execute skipped pipelines write comment konflux nudging not mintmaker renovate debug eyjjcmvhdgvksw5wzxiioii0mi4yni41lxjwbsisinvwzgf0zwrjblzlcii6ijqylji2ljutcnbtiiwidgfyz2v0qnjhbmnoijoicmhvywktmy42iiwibgfizwxzijpbimtvbmzsdxgtbnvkz2uixx0,9,131,True,True,False,False,False,False,True,True,True,False,False,True,False,False,"[""documentation"", ""testing"", ""dependency"", ""configuration""]",4,True,0.20156813989230432,0.14796126123635592,0.4015011196196058,0.16343644393571136,0.4032386407362218,0.6256712300723027,0.306275249346048,30.08,Low,6.5095214364006,6.937644248622049,0.42812281222144843
+Both scores low,189621607,3744725561,True,Repo sync,"
+This is an automated pull request to sync changes between the public and private repos.
+Our bot will merge this pull request automatically.
+To preserve continuity across repos, _do not squash_ this pull request.
+",2026-05-25,2026-05-01,0,0,1,1,2,0,2,0,0,0,False,2.0,{'Markdown': 1},{'Markdown': 1},['Markdown'],True,553074,Repo sync,"This is an automated pull request to sync changes between the public and private repos.
+Our bot will merge this pull request automatically.
+To preserve continuity across repos, _do not squash_ this pull request.",repo sync,"this is an automated pull request to sync changes between the public and private repos.
+our bot will merge this pull request automatically.
+to preserve continuity across repos, _do not squash_ this pull request.",en,repo sync,automated sync between public private repos automatically preserve continuity across repos not squash,repo sync automated sync between public private repos automatically preserve continuity across repos not squash,2,34,True,True,False,False,False,False,False,False,False,False,False,False,False,False,[],0,False,0.20156813989230432,0.14796126123635592,0.4015011196196058,0.16343644393571136,0.4032386407362218,0.04005413923032036,0.306275249346048,21.3,Low,6.5095214364006,0.16732653367712666,-6.342194902723474
+Both scores low,1168163180,3852990364,True,✨ Platform install mission generation 2026-06-12,"# Platform Mission Generation — Collect Report
+
+Generated: 2026-06-12T07:31:07Z
+
+## Results
+- New platform missions: 39
+- Schema errors: 0
+- Security blocked: 6
+
+# Platform Install Mission Generation Report
+
+Generated: 2026-06-12T07:30:45.077Z
+
+| Status | Count |
+|--------|-------|
+| ✅ Published | 6 |
+| 📝 Draft | 0 |
+| ❌ Rejected | 1 |
+| ⏭️ Skipped | 0 |
+
+## ✅ gke (score: 100)
+
+## ✅ oke (score: 99)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ iks (score: 97)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ k3s (score: 94)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ kubeadm (score: 96)
+
+## ✅ kind (score: 100)
+
+## ❌ minikube (score: 0)
+Issues: References nonexistent K8s version",2026-06-12,2026-06-01,0,0,1,1,2,0,2,22,0,0,False,2.0,{'JSON': 1},{'JSON': 1},['JSON'],False,755873,✨ Platform install mission generation 2026-06-12,"# Platform Mission Generation — Collect Report
+
+Generated: 2026-06-12T07:31:07Z
+
+## Results
+- New platform missions: 39
+- Schema errors: 0
+- Security blocked: 6
+
+# Platform Install Mission Generation Report
+
+Generated: 2026-06-12T07:30:45.077Z
+
+| Status | Count |
+|--------|-------|
+| ✅ Published | 6 |
+| 📝 Draft | 0 |
+| ❌ Rejected | 1 |
+| ⏭️ Skipped | 0 |
+
+## ✅ gke (score: 100)
+
+## ✅ oke (score: 99)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ iks (score: 97)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ k3s (score: 94)
+Issues: Uses /master/ or /main/ branch URL (should pin to release tag)
+
+## ✅ kubeadm (score: 96)
+
+## ✅ kind (score: 100)
+
+## ❌ minikube (score: 0)
+Issues: References nonexistent K8s version",✨ platform install mission generation 2026-06-12,"# platform mission generation — collect report
+
+generated: 2026-06-12t07:31:07z
+
+## results
+- new platform missions: 39
+- schema errors: 0
+- security blocked: 6
+
+# platform install mission generation report
+
+generated: 2026-06-12t07:30:45.077z
+
+| status | count |
+|--------|-------|
+| ✅ published | 6 |
+| 📝 draft | 0 |
+| ❌ rejected | 1 |
+| ⏭️ skipped | 0 |
+
+## ✅ gke (score: 100)
+
+## ✅ oke (score: 99)
+issues: uses /master/ or /main/ branch url (should pin to release tag)
+
+## ✅ iks (score: 97)
+issues: uses /master/ or /main/ branch url (should pin to release tag)
+
+## ✅ k3s (score: 94)
+issues: uses /master/ or /main/ branch url (should pin to release tag)
+
+## ✅ kubeadm (score: 96)
+
+## ✅ kind (score: 100)
+
+## ❌ minikube (score: 0)
+issues: references nonexistent k8s version",en,platform install mission generation,platform mission generation collect report generated t07 results platform missions schema errors security blocked platform install mission generation report generated t07 status count published draft rejected skipped gke score oke score issues uses master should pin release tag iks score issues uses master should pin release tag k3s score issues uses master should pin release tag kubeadm score kind score minikube score issues references nonexistent k8s version,platform install mission generation platform mission generation collect report generated t07 results platform missions schema errors security blocked platform install mission generation report generated t07 status count published draft rejected skipped gke score oke score issues uses master should pin release tag iks score issues uses master should pin release tag k3s score issues uses master should pin release tag kubeadm score kind score minikube score issues references nonexistent k8s version,7,106,True,True,False,False,False,False,False,False,True,True,False,False,True,False,"[""dependency"", ""security"", ""release""]",3,True,0.20156813989230432,0.14796126123635592,0.4015011196196058,0.16343644393571136,0.4032386407362218,0.4728679969605522,0.306275249346048,27.79,Low,6.5095214364006,3.7397984609993564,-2.769722975401244

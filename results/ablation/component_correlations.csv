@@ -1,0 +1,6 @@
+Component pair,rho,Interpretation,n
+"Code, files",0.5738860094284107,Positive association: code change and file breadth,1338401
+"Files, languages",0.6502420799369967,Positive association: file and language breadth,1338401
+"Comments, reviewers",0.5829120063802977,Positive association: discussion and participation,1338401
+"Code, comments",0.35509826126443744,Positive association: code change and discussion,1338401
+"Code, configuration",-0.23315385347421688,Negative association: code and configuration change,1338401
