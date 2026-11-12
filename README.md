@@ -6,15 +6,15 @@ Code for measuring pull request (PR) complexity, comparing PRs by Copilot access
 
 | Goal | Start here |
 | --- | --- |
-| Build and clean PR metadata | [Notebook 1](notebooks/1.build_customer_dataset.ipynb), then [Notebook 2](notebooks/2.clean_dataset.ipynb) |
-| Assign keyword categories | [Notebook 3](notebooks/3.categorize_prs_keywords.ipynb) |
-| Calculate complexity and examine merge time | [Notebook 4](notebooks/4.calculate_pr_complexity_score.ipynb) |
-| Compare score components | [Notebook 5](notebooks/5.component_ablation_analysis.ipynb) |
+| Build and clean PR metadata | [Notebook 1](paper1/notebooks/1.build_customer_dataset.ipynb), then [Notebook 2](paper1/notebooks/2.clean_dataset.ipynb) |
+| Assign keyword categories | [Notebook 3](paper1/notebooks/3.categorize_prs_keywords.ipynb) |
+| Calculate complexity and examine merge time | [Notebook 4](paper1/notebooks/4.calculate_pr_complexity_score.ipynb) |
+| Compare score components | [Notebook 5](paper1/notebooks/5.component_ablation_analysis.ipynb) |
 | Compare Copilot groups and merge time models | [Experiment guide](paper2/README.md) |
 | Edit the complexity manuscript | [Paper repository](https://github.com/syd-kiwi/pr-complexity-paper/tree/main/paper) |
 | Edit the empirical study manuscript | [Empirical study repository](https://github.com/syd-kiwi/An-Empirical-Study-of-the-Pull-Based-Software-Development-Model/tree/main/paper) |
 
-The complexity study evaluates a measurement framework. The empirical study compares PR characteristics and merge time models. The `paper2/` directory contains code for the empirical study; its folder name is retained for compatibility.
+The `paper1/` folder holds the complexity workflow. The complexity study evaluates a measurement framework. The empirical study compares PR characteristics and merge time models. The `paper2/` directory contains code for the empirical study; its folder name is retained for compatibility.
 
 ## Empirical research questions
 
@@ -44,7 +44,7 @@ jupyter lab
 
 Follow notebooks 1–5 in order, or start at notebook 2 with compatible metadata. Notebook 1 requires internal Trino access and `ecm_mlflow_libs`.
 
-Notebook paths assume `notebooks/` is the working directory. Review loading and saving cells before running: some use `../data/cleaned_public.csv`, others use `../data/microsoft/`. Notebook 2 has separate cells loading all CSVs and reloading the cleaned CSV; choose your intended input.
+Notebook paths assume `paper1/notebooks/` is the working directory. Review loading and saving cells before running: some use `../data/cleaned_public.csv`, others use `../data/microsoft/`. With the notebooks now under `paper1/`, a `../data/` path resolves to `paper1/data/`. Update it if your data remains in the repository root. Notebook 2 has separate cells loading all CSVs and reloading the cleaned CSV; choose your intended input.
 
 ### Copilot comparisons and merge time models
 
@@ -80,8 +80,8 @@ Completed review counts describe realized activity. Models using current snapsho
 
 | Folder | Contents |
 | --- | --- |
-| `scripts/` | GPU categorization, GPU scoring, and merge time prediction |
-| `additional_analysis/` | Optional language, topic, text, and modeling analyses |
-| `results/` | Saved charts, tables, and ablation outputs |
+| `paper1/scripts/` | GPU categorization, GPU scoring, and merge time prediction |
+| `paper1/additional_analysis/` | Optional language, topic, text, and modeling analyses |
+| `paper1/results/` | Saved charts, tables, and ablation outputs |
 
 Source data is not included. Keep datasets and row level outputs local unless sharing is authorized. Saved results describe their original inputs and runs.
