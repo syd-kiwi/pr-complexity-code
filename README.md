@@ -1,36 +1,29 @@
 # PR Complexity Analysis
 
-Research code for measuring pull request (PR) complexity, comparing PR characteristics by Copilot access, and studying merge time.
+Code for measuring pull request (PR) complexity, comparing PRs by Copilot access, and studying merge time.
 
-## Start here
+## Choose a workflow
 
-Choose the workflow that matches your task:
-
-| Task | Start here |
+| Goal | Start here |
 | --- | --- |
-| Prepare PR data and calculate complexity | Follow the [notebook workflow](#notebook-workflow) |
-| Compare PRs by Copilot access | Run the [RQ1 comparison](#compare-copilot-access-groups) |
-| Compare merge time prediction models | Run the [merge time experiments](#compare-merge-time-models) |
-| Find existing charts and tables | Browse [results/](results/) |
+| Build and clean PR metadata | [Notebook 1](notebooks/1.build_customer_dataset.ipynb), then [Notebook 2](notebooks/2.clean_dataset.ipynb) |
+| Assign keyword categories | [Notebook 3](notebooks/3.categorize_prs_keywords.ipynb) |
+| Calculate complexity and examine merge time | [Notebook 4](notebooks/4.calculate_pr_complexity_score.ipynb) |
+| Compare score components | [Notebook 5](notebooks/5.component_ablation_analysis.ipynb) |
+| Compare Copilot groups and merge time models | [Experiment guide](paper2/README.md) |
+| Edit the complexity manuscript | [Paper repository](https://github.com/syd-kiwi/pr-complexity-paper/tree/main/paper) |
+| Edit the empirical study manuscript | [Empirical study repository](https://github.com/syd-kiwi/An-Empirical-Study-of-the-Pull-Based-Software-Development-Model/tree/main/paper) |
 
-Source datasets are not included. You need compatible PR metadata to run the analyses.
+The complexity study evaluates a measurement framework. The empirical study compares PR characteristics and merge time models. The `paper2/` directory contains code for the empirical study; its folder name is retained for compatibility.
 
-## Research focus
-
-The repository supports a PR complexity measurement study and an empirical study of PR behavior and merge time.
-
-The empirical study focuses on two questions:
+## Empirical research questions
 
 1. **RQ1: How do PR size, language composition, review activity, and merge time differ between authors with and without Copilot access?**
 2. **RQ2: Can machine learning predict PR merge time based on limited features?**
 
-The scripts in `paper2/` provide descriptive comparisons, model comparisons, feature ablations, and evaluation across repositories or merge periods. See the [experiment guide](paper2/README.md) for implemented analyses and the [research plan](paper2/RESEARCH_PLAN.md) for related work and evaluation details.
-
-Copilot seat status indicates access. It does not confirm tool use or AI authorship. Comparisons describe associations and do not establish a causal effect.
+Feature ablations, text representations, and generalization checks support RQ2. Copilot seat status measures access, not confirmed tool use or AI authorship.
 
 ## Setup
-
-Clone the repository and create an environment:
 
 ```bash
 git clone https://github.com/syd-kiwi/pr-complexity-code.git
@@ -38,107 +31,57 @@ cd pr-complexity-code
 python -m venv .venv
 ```
 
-Activate it:
+Activate with `source .venv/bin/activate` on macOS/Linux or `.venv\Scripts\Activate.ps1` in Windows PowerShell.
 
-- **Windows PowerShell:** `.venv\Scripts\Activate.ps1`
-- **macOS/Linux:** `source .venv/bin/activate`
+### Complexity notebooks
 
-### Notebook workflow
-
-Follow notebooks 1–5 in order. If you already have compatible PR metadata, start at notebook 2. Use this workflow to calculate the complexity score; the merge time scripts above can run independently.
-
-The root `requirements.txt` currently contains unresolved Git merge conflict markers and cannot be installed as written. For the core notebook workflow, install the main packages directly:
+The root `requirements.txt` contains unresolved merge conflict markers. Install the main notebook packages directly until that file is repaired:
 
 ```bash
 python -m pip install jupyterlab pandas numpy matplotlib seaborn scipy scikit-learn joblib tqdm langdetect wordcloud
 jupyter lab
 ```
 
-Internal data extraction and optional analyses require additional dependencies. Notebook 1 requires internal Trino access and `ecm_mlflow_libs`.
+Follow notebooks 1–5 in order, or start at notebook 2 with compatible metadata. Notebook 1 requires internal Trino access and `ecm_mlflow_libs`.
 
-Open the notebooks from `notebooks/`. Their relative paths assume that folder is the working directory.
+Notebook paths assume `notebooks/` is the working directory. Review loading and saving cells before running: some use `../data/cleaned_public.csv`, others use `../data/microsoft/`. Notebook 2 has separate cells loading all CSVs and reloading the cleaned CSV; choose your intended input.
 
-### Merge time experiments
+### Copilot comparisons and merge time models
 
-The `paper2/` scripts have a separate requirements file and run independently of the root requirements:
+These scripts have independent dependencies. Run commands from the repository root:
 
 ```bash
 python -m pip install -r paper2/requirements.txt
-```
-
-Run the following commands from the repository root. The examples use `data/cleaned_public.csv`; replace that path with your input file. Each output directory must be new or empty.
-
-### Compare Copilot access groups
-
-Prepare the data, then generate descriptive comparisons without training models:
-
-```bash
 python paper2/prepare.py --input data/cleaned_public.csv --output paper2/outputs/prepared01 --scope all
 python paper2/analyze.py --input paper2/outputs/prepared01/prepared.parquet --output paper2/outputs/rq1_01
 ```
 
-This produces group summaries, correlations, within-repository merge time comparisons, and a cumulative merge time figure. Start with `by_had_copilot_seat.csv` and `within_repository_effect.json` in `paper2/outputs/rq1_01/`.
+This prepares data and runs descriptive comparisons without training models. Use new or empty output directories. `--scope all` retains public and private rows; use `open-source` or `private` for a specific population.
 
-The example retains public and private rows with `--scope all`. Use `--scope open-source` or `--scope private` for a specific population. Check `prepared01/audit.json` for actual row counts and filtering.
-
-### Compare merge time models
-
-For a small CPU development run:
-
-```bash
-python paper2/run_pipeline.py --input data/cleaned_public.csv --output paper2/outputs/dev01 --scope all --device cpu --trials 1 --trees 30 --permutation-rows 100
-```
-
-Use a small compatible dataset with enough repositories and examples of all three duration classes. These settings check the workflow; they are not a final experiment.
-
-For the standard GPU experiment:
-
-```bash
-python paper2/run_pipeline.py --input data/cleaned_public.csv --output paper2/outputs/run01 --scope all --device cuda:0
-```
-
-The pipeline prepares the data, runs the Copilot comparisons, and compares XGBoost, logistic regression, and a majority baseline. It holds out entire repositories by default. GPU training requires a compatible NVIDIA setup.
-
-See [paper2/README.md](paper2/README.md) for feature sets, evaluation metrics, text features, ordinal classification, duration regression, and saved model evaluation.
-
-## Notebook workflow
-
-| Step | Notebook | Purpose |
-| --- | --- | --- |
-| 1 | [Build dataset](notebooks/1.build_customer_dataset.ipynb) | Query source PR metadata using internal access. |
-| 2 | [Clean dataset](notebooks/2.clean_dataset.ipynb) | Clean metadata and prepare title and body features. |
-| 3 | [Categorize PRs](notebooks/3.categorize_prs_keywords.ipynb) | Match keyword categories in PR titles and bodies. |
-| 4 | [Calculate complexity](notebooks/4.calculate_pr_complexity_score.ipynb) | Calculate scores and examine their relationship with merge time. |
-| 5 | [Component ablation](notebooks/5.component_ablation_analysis.ipynb) | Remove score components and compare the resulting patterns. |
-
-Before running, review each notebook's loading and saving cells. Paths are not fully standardized: some use `../data/cleaned_public.csv`, while others use files under `../data/microsoft/`. Set them to your own files and make sure each output matches the next notebook's input. Notebook 2 currently loads all CSVs in `data/` in one cell and reloads `cleaned_public.csv` in another; choose the intended input before executing it.
+For model comparisons, CPU development commands, GPU experiments, and output definitions, follow [paper2/README.md](paper2/README.md).
 
 ## Complexity score
 
-The implemented score combines five percentile based components:
+| Component | Post-review weight |
+| --- | --- |
+| Code lines modified | 30% |
+| Files touched | 20% |
+| Review burden | 25% |
+| Configuration lines modified | 10% |
+| Keyword category count | 15% |
 
-| Component | Input | Weight |
-| --- | --- | --- |
-| Code size | Code lines modified, with total modified lines as a fallback | 30% |
-| File breadth | Files touched | 20% |
-| Review burden | Review comments and reviewer count | 25% |
-| Configuration impact | Configuration lines modified | 10% |
-| Keyword breadth | Number of matched keyword categories | 15% |
+Review burden combines percentile ranks of review comments (60%) and reviewer count (40%). The weighted sum is multiplied by 100. Notebook 4 uses average percentile ranks after `log1p`, with total modified lines as a fallback for code lines.
 
-Review burden combines the percentile ranks of review comments (60%) and reviewer count (40%). The final weighted score is multiplied by 100.
+Weights are researcher selected. Recompute percentiles using your own dataset and report feature definitions, ties, and missing value handling. The manuscript also defines a pre-review formulation; check its [measure section](https://github.com/syd-kiwi/pr-complexity-paper/blob/main/paper/sections/03-complexity-measure.tex) before assuming every variant is implemented in these notebooks.
 
-These weights are researcher selected and shared in the code. To calculate scores on your own dataset, compute the component percentiles using your own dataset. Notebook 4 uses average ranks for ties after a `log1p` transformation. Report the dataset, feature definitions, and missing value handling when sharing results.
+Completed review counts describe realized activity. Models using current snapshots require retrospective interpretation because feature availability at PR opening has not been verified. The empirical models exclude the composite complexity score and compare review features separately.
 
-Because the score includes completed review activity, it describes realized complexity. Its association with merge time does not establish prediction before review. The merge time models exclude the composite score and compare review features separately. The available snapshots also require retrospective interpretation because opening-time feature availability has not been verified.
-
-## Repository guide
+## Other folders
 
 | Folder | Contents |
 | --- | --- |
-| `notebooks/` | Main dataset and complexity workflow |
-| [`paper2/`](paper2/README.md) | Copilot comparisons and merge time experiments |
-| `scripts/` | GPU categorization, GPU scoring, and a merge time prediction script |
+| `scripts/` | GPU categorization, GPU scoring, and merge time prediction |
 | `additional_analysis/` | Optional language, topic, text, and modeling analyses |
-| `results/` | Saved charts, summary tables, and component ablation outputs |
+| `results/` | Saved charts, tables, and ablation outputs |
 
-Keep source datasets and row level outputs local unless you have permission to share them. Saved results belong to particular inputs and runs; rerunning on another dataset may produce different findings.
+Source data is not included. Keep datasets and row level outputs local unless sharing is authorized. Saved results describe their original inputs and runs.
