@@ -13,6 +13,7 @@
 pr_venv.env
 pr_venv/
 .venv/
+.venv-paper2/
 venv/
 __pycache__/
 *.py[cod]
