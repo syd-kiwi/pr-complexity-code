@@ -6,7 +6,7 @@ from common import clean_data, dump_json, fingerprint, fresh_output, read_source
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, help="CSV, CSV.GZ, or Parquet file")
+    parser.add_argument("--input", default="data/cleaned_public.csv", help="CSV, CSV.GZ, or Parquet file (default: data/cleaned_public.csv, relative to the working directory)")
     parser.add_argument("--output", required=True, help="New directory")
     parser.add_argument("--scope", choices=["open-source", "private", "all"], default="open-source")
     parser.add_argument("--exclude-zero", action="store_true")

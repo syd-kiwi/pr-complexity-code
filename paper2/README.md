@@ -30,7 +30,7 @@ nvidia-smi
 
 On Windows PowerShell, activate with `.venv-paper2\Scripts\Activate.ps1`.
 
-Put the dataset outside tracked source files, for example `paper2/data/prs.csv`. Accepted inputs: one CSV, compressed CSV (`.csv.gz`), or Parquet file. Convert a multi-file extract to one Parquet file first. Do not concatenate multiple snapshots of the same PR.
+The default source file is `data/cleaned_public.csv`. Run commands from the repository root so this path resolves correctly. Override it with `--input` when needed. Accepted inputs: one CSV, compressed CSV (`.csv.gz`), or Parquet file. Convert a multi-file extract to one Parquet file first. Do not concatenate multiple snapshots of the same PR.
 
 ## Run the full experiment
 
@@ -38,7 +38,6 @@ From the repository root:
 
 ```bash
 python paper2/run_pipeline.py \
-  --input paper2/data/prs.csv \
   --output paper2/outputs/run01 \
   --scope open-source \
   --device cuda:0
@@ -52,7 +51,7 @@ For repeated repository splits and a separate retrospective merge-period evaluat
 
 ```bash
 python paper2/run_pipeline.py \
-  --input paper2/data/prs.parquet \
+  --input data/cleaned_public.csv \
   --output paper2/outputs/repeated01 \
   --device cuda:0 \
   --splits repository merge-time \
@@ -77,7 +76,7 @@ Use a sample containing enough repositories and examples of all three classes. T
 ## Run stages separately
 
 ```bash
-python paper2/prepare.py --input paper2/data/prs.csv --output paper2/outputs/prepared01
+python paper2/prepare.py --output paper2/outputs/prepared01
 python paper2/analyze.py --input paper2/outputs/prepared01/prepared.parquet --output paper2/outputs/rq1_01
 python paper2/train.py --input paper2/outputs/prepared01/prepared.parquet --output paper2/outputs/models01 --device cuda:0
 ```

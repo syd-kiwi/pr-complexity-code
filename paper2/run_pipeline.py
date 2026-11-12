@@ -10,7 +10,7 @@ from common import dump_json, fresh_output, setup_logging, LOG
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True)
+    parser.add_argument("--input", default="data/cleaned_public.csv", help="Source file (default: data/cleaned_public.csv, relative to the working directory)")
     parser.add_argument("--output", required=True, help="New directory for the whole experiment")
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--scope", choices=["open-source", "private", "all"], default="open-source")
