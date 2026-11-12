@@ -55,7 +55,8 @@ def fresh_output(path):
 
 
 def versions():
-    names = ["numpy", "pandas", "pyarrow", "scipy", "scikit-learn", "xgboost", "joblib"]
+    names = ["numpy", "pandas", "pyarrow", "scipy", "scikit-learn", "xgboost", "joblib",
+             "sentence-transformers", "transformers", "torch"]
     result = {"python": platform.python_version()}
     for name in names:
         try:
@@ -110,8 +111,8 @@ def parse_languages(value):
     raise ValueError(f"Unsupported languages_list type: {type(value).__name__}")
 
 
-def read_source(path):
-    """Read only needed columns; omit raw/free text and all NLP copies."""
+def read_source(path, include_text=False):
+    """Read selected columns; raw title/body are opt-in for text experiments."""
     import pyarrow.parquet as pq
     path = Path(path)
     if not path.is_file():
@@ -119,6 +120,8 @@ def read_source(path):
     parquet = path.suffix.lower() in {".parquet", ".pq"}
     available = pq.read_schema(path).names if parquet else pd.read_csv(path, nrows=0).columns.tolist()
     required = KEYS + STRUCTURAL + REVIEW + TEXT + [TARGET, "languages_list", "is_open_source", "had_copilot_seat"]
+    if include_text:
+        required += ["title", "body"]
     missing = sorted(set(required) - set(available))
     if missing:
         raise ValueError(f"Missing columns: {missing}. This workflow expects the supplied 37-column schema.")
@@ -133,6 +136,10 @@ def read_source(path):
 def clean_data(df, scope, exclude_zero=False):
     df = df.copy()
     audit = {"input_rows": len(df), "scope": scope, "exclude_zero": exclude_zero}
+    for c in ["title", "body"]:
+        if c in df:
+            df[c] = df[c].fillna("").astype(str)
+    audit["retained_text_columns"] = [c for c in ["title", "body"] if c in df]
     for c in KEYS + (["user_id"] if "user_id" in df else []):
         df[c] = df[c].astype("string").str.strip().replace("", pd.NA)
     valid_keys = df[KEYS].notna().all(axis=1)

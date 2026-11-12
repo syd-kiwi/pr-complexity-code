@@ -53,7 +53,7 @@ Review burden combines review comments (60%) and reviewer count (40%). The score
 
 ## Other folders
 
-- [`paper2/`](paper2/README.md): Independent scripts for Copilot access comparisons and GPU XGBoost merge speed classification. Includes its own requirements, RQ mapping, and run commands.
+- [`paper2/`](paper2/README.md): Copilot comparisons, GPU XGBoost classification, actual title/body text, ordinal models, duration regression, and training diagnostics. Includes [related work and the experiment plan](paper2/RESEARCH_PLAN.md), independent requirements, and RunPod commands.
 - `scripts/`: GPU categorization and scoring scripts, plus merge time prediction.
 - `additional_analysis/`: Optional language, topic, and modeling analyses.
 - `results/`: Saved charts, summary tables, and ablation outputs.

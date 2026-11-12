@@ -4,6 +4,105 @@
 
 This folder contains scripts for the approximately 1.2 million PR dataset with the supplied 37-column schema. The scripts compute actual row counts; the dataset is not included. They run independently of the repository's existing notebooks and root requirements file.
 
+## Enhanced experiments after the first run
+
+The enhanced runner adds actual title/body text, training/validation diagnostics, ordered classification, and duration regression. The original `run_pipeline.py` remains available. See [RESEARCH_PLAN.md](RESEARCH_PLAN.md) for the questions, related work, and evaluation plan.
+
+On RunPod, start from `/workspace/pr-complexity-code`:
+
+```bash
+git pull
+python -m pip install -r paper2/requirements.txt
+python -u paper2/run_research.py \
+  --output paper2/outputs/research02 \
+  --device cuda:0 --threads 16 \
+  --split-file paper2/outputs/a100_run01/repository_seed42/splits.csv.gz \
+  --thresholds 35 826 \
+  --tasks multiclass \
+  --feature-sets description review \
+  --text-methods none tfidf
+```
+
+This is a staged development run: full training data, three hyperparameter trials per comparison, and training/validation scores. It holds the original partitions and duration definitions fixed. It does **not** score the original test again by default. The defaults still read `data/cleaned_public.csv`. `35` and `826` minutes reproduce the already-observed first experiment; they are not universal duration cutoffs. Omit `--thresholds` for training-only tertiles on a different dataset.
+
+Preparation now retains raw title/body only with `--include-text`; `run_research.py` enables that automatically. It writes a new prepared file without changing the earlier run. `--prepared-input` can reuse that new text-bearing Parquet in later runs, avoiding another CSV load:
+
+```bash
+python -u paper2/run_research.py \
+  --prepared-input paper2/outputs/research02/prepared/prepared.parquet \
+  --output paper2/outputs/research03 \
+  --device cuda:0 --threads 16 \
+  --split-file paper2/outputs/a100_run01/repository_seed42/splits.csv.gz \
+  --thresholds 35 826 \
+  --tasks multiclass ordinal regression \
+  --feature-sets description copilot review review_copilot \
+  --text-methods none tfidf
+```
+
+The second command runs more comparisons. Choose the experiment matrix before evaluating it and report all attempted variants. Larger searches are available through `--trials` (maximum 36), `--trees`, and `--early-stopping`, but no performance increase is promised.
+
+For optional pretrained embeddings, install the extra dependencies and run a separate comparison:
+
+```bash
+python -m pip install -r paper2/requirements-embeddings.txt
+python -u paper2/run_research.py \
+  --prepared-input paper2/outputs/research02/prepared/prepared.parquet \
+  --output paper2/outputs/embeddings01 \
+  --device cuda:0 --threads 16 \
+  --split-file paper2/outputs/a100_run01/repository_seed42/splits.csv.gz \
+  --thresholds 35 826 --tasks multiclass \
+  --feature-sets description review \
+  --text-methods embeddings --embedding-batch-size 128
+```
+
+The default frozen encoder is `sentence-transformers/all-MiniLM-L6-v2`; specify `--encoder` for another model or local path. Use `--encoder-revision` with an immutable model commit for an archival run. The first use may download model weights. Documents are capped at 12,000 characters; the encoder also truncates to its token limit, which is recorded in its metadata. No fine-tuning occurs. Embedding encoding and XGBoost use the GPU sequentially, releasing the encoder from GPU memory before tree training. TF-IDF, SVD, scalers, and linear baselines use CPU; `--threads` controls XGBoost threads, not every library's thread pool.
+
+### Enhanced outputs and tasks
+
+Under each run's `models/`, inspect:
+
+- `metrics.csv`: training sample and validation scores for all attempted models; test/external metrics only when requested.
+- `generalization_gaps.csv`: training sample versus validation macro F1. By default the training diagnostics use a seeded 50,000-row sample; `--diagnostic-rows 0` evaluates all training rows.
+- `feature_comparisons.csv`: matched text and tabular feature comparisons within each task, split, and model type. Positive macro F1 differences favor the added features; negative absolute class error differences favor them.
+- `validation_trials.csv`: task-specific training/validation scores, selected boosting rounds, actual devices, and sampled hyperparameters.
+- `*_learning_curves.csv` and selected model `*_learning_curves.png`: training sample and validation loss across boosting rounds. Ordinal models have one curve pair per cumulative threshold.
+- `*_validation_confusion.csv`, `*_validation_by_repository.csv`, and `*_validation_by_had_copilot_seat.csv`: diagnostics for each selected configuration and applicable linear baseline. Per-repository/group tables report sample counts and error aggregates, rather than significance or causal claims.
+- `selected_on_validation.json`: a separate selected bundle for each task. Scores for different tasks are not directly ranked against one another.
+- `*_stage*_gain_importance.csv`: selected XGBoost feature importance. Text components are latent dimensions, not interpretable topics; gain importance does not establish causation.
+- `text_encoder_*.joblib`, saved model bundles, and native XGBoost stage models. Keep a bundle beside its referenced text encoder when moving the output directory.
+
+`multiclass` selects by validation macro F1. `ordinal` fits two cumulative binary XGBoost models, corrects crossing cumulative probabilities, predicts the posterior median class, and selects by validation mean absolute class error. It can reduce extreme mistakes without improving exact accuracy. `regression` predicts log(1 + minutes), selects by validation log MAE, and reports errors in both log units and actual minutes. Its durations are also mapped back to the same three classes for secondary diagnostics. Negative log predictions are clipped to zero, with an upper numerical bound of 30 before exponentiation.
+
+Early stopping uses validation loss, with a training diagnostic sample logged first. Train/validation scores are unweighted even when classification training uses `--class-weight balanced`. Ordinal stages receive the same original class-derived row weights; regression is unweighted. The same candidates and PR partitions are used across representations and feature sets. Linear baselines use fixed parameters; `--skip-linear` omits them when only a tree diagnostic is needed, while majority/median baselines remain.
+
+TF-IDF fits unigram/bigram vocabulary and inverse-document frequencies on training text only, followed by training-fitted SVD and scaling. Defaults are a 30,000-term vocabulary and up to 128 components. Transformations are chunked and reused across all feature sets/tasks in that run. Frozen embeddings are also scaled on training rows only. The workflow remains in host RAM; it is not distributed or out-of-core.
+
+### Generalization and final evaluation
+
+`experiment.py --split known-repository` uses later merge periods from repositories represented in training. Omit `--split-file` for this protocol. Repositories first seen in later periods are excluded from evaluation, with row exclusions recorded. This protocol differs from holding out entire repositories and must be reported separately. Neither protocol establishes opening-time prediction from final snapshots. To reuse a prepared table directly:
+
+```bash
+python paper2/experiment.py \
+  --input paper2/outputs/research02/prepared/prepared.parquet \
+  --output paper2/outputs/known_repository01 \
+  --device cuda:0 --threads 16 --split known-repository \
+  --thresholds 35 826 --tasks multiclass \
+  --feature-sets description review --text-methods none tfidf
+```
+
+Use `--evaluate-test` only for an explicitly exploratory revisit of the internal test. Re-splitting data already used during development does not make a genuinely untouched final test. With separately collected, independently held-out data, prepare it with `--include-text` and evaluate an already fixed bundle without retraining:
+
+```bash
+python paper2/prepare.py --input data/independent_prs.csv --include-text --output paper2/outputs/independent_prepared
+python paper2/evaluate_saved.py \
+  --model paper2/outputs/research02/models/tfidf_review_multiclass_xgboost.joblib \
+  --input paper2/outputs/independent_prepared/prepared.parquet \
+  --development-input paper2/outputs/research02/prepared/prepared.parquet \
+  --output paper2/outputs/independent_evaluation
+```
+
+Supply the model actually selected on validation. The evaluator rejects PR keys found in development data and uses the saved class boundaries. Independence and snapshot timing still require researcher verification. Opening-time data collection and extra history/CI features are described in the research plan; the scripts do not invent those fields.
+
 ## Research questions
 
 | Question | Analysis | Main outputs |
@@ -134,6 +233,6 @@ Data, outputs, row identifiers, predictions, and model binaries remain local and
 python -m unittest discover -s paper2/tests -v
 ```
 
-Tests use generated synthetic data. They check boolean parsing, unknown status, filtering, deduplication conflicts, repository separation, merge-day boundaries, class definitions, CSV and Parquet input, all five model feature sets on CPU, artifact reload predictions, and output overwrite protection. Actual GPU execution and real-data conclusions require your GPU machine and dataset.
+Tests use generated synthetic data. They check boolean parsing, unknown status, filtering, deduplication conflicts, repository separation, merge-day boundaries, class definitions, CSV and Parquet input, all five original model feature sets on CPU, artifact reload predictions, and output overwrite protection. Enhanced tests cover text vocabulary leakage, SVD/encoder reload, monotonic ordinal probabilities, ordered errors, split reuse by PR key, known-repository timing, all enhanced tasks on CPU, fixed-model evaluation, and external PR overlap rejection. Optional sentence embedding API behavior is tested with a deterministic local fake, not a model download. Actual CUDA execution and pretrained model encoding require your GPU machine and optional dependencies.
 
 Implementation references: [XGBoost GPU support](https://xgboost.readthedocs.io/en/stable/gpu/), [XGBoost parameters](https://xgboost.readthedocs.io/en/stable/parameter.html), and [scikit-learn group splits](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupShuffleSplit.html).
