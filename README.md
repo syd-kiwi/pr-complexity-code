@@ -82,6 +82,6 @@ Completed review counts describe realized activity. Models using current snapsho
 | --- | --- |
 | `paper1/scripts/` | GPU categorization, GPU scoring, and merge time prediction |
 | `paper1/additional_analysis/` | Optional language, topic, text, and modeling analyses |
-| `paper1/results/` | Saved charts, tables, and ablation outputs |
+| `paper1/scripts/classifier_results/` | Saved classifier outputs |
 
 Source data is not included. Keep datasets and row level outputs local unless sharing is authorized. Saved results describe their original inputs and runs.
