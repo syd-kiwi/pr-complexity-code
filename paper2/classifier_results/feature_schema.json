@@ -1,0 +1,27 @@
+{
+  "raw_predictors": [
+    "code_lines_modified",
+    "config_lines_modified",
+    "files_touched",
+    "title",
+    "body"
+  ],
+  "numeric_features": [
+    "code_lines_modified",
+    "config_lines_modified",
+    "files_touched",
+    "lines_per_file",
+    "configuration_share",
+    "title_words",
+    "body_words",
+    "has_body",
+    "has_checklist",
+    "mentions_fix",
+    "mentions_test",
+    "mentions_docs",
+    "mentions_dependency",
+    "mentions_refactor",
+    "mentions_feature"
+  ],
+  "count": 15
+}

@@ -1,0 +1,16 @@
+feature,gain_importance
+mentions_feature,0.20048013
+code_lines_modified,0.09569778
+has_checklist,0.09345094
+body_words,0.09106283
+mentions_test,0.07609094
+mentions_docs,0.07603437
+mentions_dependency,0.07219182
+configuration_share,0.052573096
+title_words,0.04737513
+files_touched,0.043996345
+mentions_refactor,0.038438484
+config_lines_modified,0.038212035
+mentions_fix,0.03816439
+lines_per_file,0.036231764
+has_body,0.0

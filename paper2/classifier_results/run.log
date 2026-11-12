@@ -1,0 +1,83 @@
+2026-10-29 15:59:51,504 INFO Task: 0=within 1440 minutes; 1=OVER 1440 minutes
+2026-10-29 15:59:51,504 INFO Goal 85.0% accuracy AND >= 50.0% recall for each class; attainment is unknown until evaluation
+2026-10-29 15:59:51,504 INFO START | Read CSV (CPU/disk)
+2026-10-29 16:00:06,511 INFO WORKING | Read CSV (CPU/disk) | 15.0 s elapsed
+2026-10-29 16:00:21,522 INFO WORKING | Read CSV (CPU/disk) | 30.0 s elapsed
+2026-10-29 16:00:55,819 INFO WORKING | Read CSV (CPU/disk) | 64.3 s elapsed
+2026-10-29 16:00:58,755 INFO DONE | Read CSV (CPU/disk) | 67.2 s
+2026-10-29 16:00:58,759 INFO Loaded 1,338,401 rows
+2026-10-29 16:00:58,760 INFO START | Validate identifiers and duplicate PRs (CPU)
+2026-10-29 16:01:01,193 INFO DONE | Validate identifiers and duplicate PRs (CPU) | 2.4 s
+2026-10-29 16:01:01,388 INFO START | Create or reuse repository splits
+2026-10-29 16:01:03,204 INFO DONE | Create or reuse repository splits | 1.8 s
+2026-10-29 16:01:03,375 INFO Split train: 951,569 rows; long-duration fraction 0.243
+2026-10-29 16:01:03,406 INFO Split tune: 100,372 rows; long-duration fraction 0.262
+2026-10-29 16:01:03,435 INFO Split cutoff: 93,606 rows; long-duration fraction 0.253
+2026-10-29 16:01:03,483 INFO Split test: 192,854 rows; long-duration fraction 0.219
+2026-10-29 16:01:08,191 INFO START | Build compact features (CPU; no language-dictionary parsing)
+2026-10-29 16:01:23,214 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 15.0 s elapsed
+2026-10-29 16:01:38,282 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 30.1 s elapsed
+2026-10-29 16:01:53,384 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 45.2 s elapsed
+2026-10-29 16:02:30,458 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 82.3 s elapsed
+2026-10-29 16:03:05,829 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 117.6 s elapsed
+2026-10-29 16:03:20,898 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 132.7 s elapsed
+2026-10-29 16:03:35,947 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 147.8 s elapsed
+2026-10-29 16:03:51,008 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 162.8 s elapsed
+2026-10-29 16:04:06,072 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 177.9 s elapsed
+2026-10-29 16:04:21,126 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 192.9 s elapsed
+2026-10-29 16:04:36,182 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 208.0 s elapsed
+2026-10-29 16:04:51,225 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 223.0 s elapsed
+2026-10-29 16:05:06,275 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 238.1 s elapsed
+2026-10-29 16:05:21,330 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 253.1 s elapsed
+2026-10-29 16:06:48,606 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 340.4 s elapsed
+2026-10-29 16:07:03,655 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 355.5 s elapsed
+2026-10-29 16:07:18,704 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 370.5 s elapsed
+2026-10-29 16:07:33,741 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 385.5 s elapsed
+2026-10-29 16:07:48,790 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 400.6 s elapsed
+2026-10-29 16:08:03,838 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 415.6 s elapsed
+2026-10-29 16:08:18,891 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 430.7 s elapsed
+2026-10-29 16:08:33,949 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 445.8 s elapsed
+2026-10-29 16:08:48,997 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 460.8 s elapsed
+2026-10-29 16:09:04,050 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 475.9 s elapsed
+2026-10-29 16:09:19,106 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 490.9 s elapsed
+2026-10-29 16:09:34,160 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 506.0 s elapsed
+2026-10-29 16:09:49,221 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 521.0 s elapsed
+2026-10-29 16:10:04,280 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 536.1 s elapsed
+2026-10-29 16:10:19,342 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 551.2 s elapsed
+2026-10-29 16:10:20,928 INFO DONE | Build compact features (CPU; no language-dictionary parsing) | 552.7 s
+2026-10-29 16:10:20,940 INFO Ready: 1,338,401 rows x 15 numeric features
+2026-10-29 16:11:39,655 INFO TRIAL 1/3 | {"n_estimators": 1500, "max_depth": 4, "min_child_weight": 10, "learning_rate": 0.05, "subsample": 0.8, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 60}
+2026-10-29 16:11:39,668 INFO START | Train trial 1 on cpu
+2026-10-29 16:11:54,686 INFO WORKING | Train trial 1 on cpu | 15.0 s elapsed
+2026-10-29 16:12:09,698 INFO WORKING | Train trial 1 on cpu | 30.0 s elapsed
+2026-10-29 16:12:24,699 INFO WORKING | Train trial 1 on cpu | 45.0 s elapsed
+2026-10-29 16:12:30,872 INFO DONE | Train trial 1 on cpu | 51.2 s
+2026-10-29 16:12:30,876 INFO Actual training device: cpu; best boosting iteration: 1488
+2026-10-29 16:12:30,878 INFO START | Score trial 1 on tuning PRs
+2026-10-29 16:12:31,257 INFO DONE | Score trial 1 on tuning PRs | 0.4 s
+2026-10-29 16:12:31,351 INFO TRIAL DONE | tune accuracy 0.635 | balanced 0.591 | recall floors met=True | best trial=1
+2026-10-29 16:12:31,352 INFO TRIAL 2/3 | {"n_estimators": 1500, "max_depth": 6, "min_child_weight": 10, "learning_rate": 0.05, "subsample": 0.8, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 60}
+2026-10-29 16:12:31,352 INFO START | Train trial 2 on cpu
+2026-10-29 16:16:05,652 INFO WORKING | Train trial 2 on cpu | 214.3 s elapsed
+2026-10-29 16:16:20,663 INFO WORKING | Train trial 2 on cpu | 229.3 s elapsed
+2026-10-29 16:16:34,940 INFO DONE | Train trial 2 on cpu | 243.6 s
+2026-10-29 16:16:34,942 INFO Actual training device: cpu; best boosting iteration: 1016
+2026-10-29 16:16:34,945 INFO START | Score trial 2 on tuning PRs
+2026-10-29 16:16:35,356 INFO DONE | Score trial 2 on tuning PRs | 0.4 s
+2026-10-29 16:16:35,396 INFO TRIAL DONE | tune accuracy 0.635 | balanced 0.591 | recall floors met=True | best trial=2
+2026-10-29 16:16:35,396 INFO TRIAL 3/3 | {"n_estimators": 1500, "max_depth": 8, "min_child_weight": 20, "learning_rate": 0.05, "subsample": 0.9, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 60}
+2026-10-29 16:16:35,397 INFO START | Train trial 3 on cpu
+2026-10-29 16:16:50,404 INFO WORKING | Train trial 3 on cpu | 15.0 s elapsed
+2026-10-29 16:16:56,778 INFO DONE | Train trial 3 on cpu | 21.4 s
+2026-10-29 16:16:56,780 INFO Actual training device: cpu; best boosting iteration: 430
+2026-10-29 16:16:56,783 INFO START | Score trial 3 on tuning PRs
+2026-10-29 16:16:57,025 INFO DONE | Score trial 3 on tuning PRs | 0.2 s
+2026-10-29 16:16:57,059 INFO TRIAL DONE | tune accuracy 0.636 | balanced 0.592 | recall floors met=True | best trial=3
+2026-10-29 16:16:57,060 INFO START | Select final cutoff on separate validation repositories
+2026-10-29 16:16:57,297 INFO DONE | Select final cutoff on separate validation repositories | 0.2 s
+2026-10-29 16:16:57,299 INFO START | Save selected model and cutoff
+2026-10-29 16:16:57,421 INFO DONE | Save selected model and cutoff | 0.1 s
+2026-10-29 16:16:57,422 INFO START | Evaluate selected classifier on held-out test PRs
+2026-10-29 16:16:58,011 INFO DONE | Evaluate selected classifier on held-out test PRs | 0.6 s
+2026-10-29 16:17:05,795 INFO GOAL CHECK | 85.0% accuracy target met=False | both-class recall floors met=False
+2026-10-29 16:17:05,796 INFO RUN COMPLETE | 17.2 minutes | results=C:\Users\sydne\OneDrive\Documents\pr-complexity-code\classifier_results

@@ -1,0 +1,70 @@
+{
+  "raw_predictors": [
+    "code_lines_modified",
+    "config_lines_modified",
+    "files_touched",
+    "title",
+    "body"
+  ],
+  "numeric_features": [
+    "code_lines_modified",
+    "config_lines_modified",
+    "files_touched",
+    "lines_per_file",
+    "configuration_share",
+    "title_words",
+    "body_words",
+    "has_body",
+    "has_checklist",
+    "mentions_fix",
+    "mentions_test",
+    "mentions_docs",
+    "mentions_dependency",
+    "mentions_refactor",
+    "mentions_feature"
+  ],
+  "tfidf_vocabulary_size": 20000,
+  "svd_dimensions": 64,
+  "matrix_dimensions": {
+    "train": {
+      "logistic": [
+        951569,
+        20015
+      ],
+      "xgboost": [
+        951569,
+        79
+      ]
+    },
+    "tune": {
+      "logistic": [
+        100372,
+        20015
+      ],
+      "xgboost": [
+        100372,
+        79
+      ]
+    },
+    "cutoff": {
+      "logistic": [
+        93606,
+        20015
+      ],
+      "xgboost": [
+        93606,
+        79
+      ]
+    },
+    "test": {
+      "logistic": [
+        192854,
+        20015
+      ],
+      "xgboost": [
+        192854,
+        79
+      ]
+    }
+  }
+}

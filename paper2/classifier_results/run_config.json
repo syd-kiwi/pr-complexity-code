@@ -1,0 +1,30 @@
+{
+  "arguments": {
+    "input": ".\\data\\cleaned_public.csv",
+    "output": ".\\classifier_results",
+    "feature_set": "compact",
+    "device": "cpu",
+    "splits": null,
+    "trials": 3,
+    "max_trees": 1500,
+    "patience": 60,
+    "jobs": 4,
+    "seed": 42,
+    "threshold_minutes": 1440.0,
+    "target_accuracy": 0.85,
+    "min_class_recall": 0.5,
+    "progress_interval": 15.0,
+    "predict_from": null
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0",
+    "xgboost": "3.4.1"
+  },
+  "positive_class": "minutes_to_merge > threshold_minutes",
+  "test_selection": false,
+  "selection": "tune accuracy with both-class recall constraint; separate cutoff subset",
+  "limitation": "Feature snapshot timing unverified; final-state features are not necessarily available at submission."
+}

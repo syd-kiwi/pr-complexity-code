@@ -1,0 +1,348 @@
+2026-10-29 17:25:58,426 INFO VERSION 2 | features=tfidf | models=['logistic', 'xgboost'] | trials per family=3
+2026-10-29 17:25:58,426 INFO Class 1 = more than 1440 minutes. Accuracy and balanced-recall cutoffs will be reported SEPARATELY.
+2026-10-29 17:25:58,427 INFO 85%% is a target to measure, not a promised result. No sampling: all valid PR rows are used.
+2026-10-29 17:25:58,427 INFO START | Read CSV (CPU/disk)
+2026-10-29 17:26:13,443 INFO WORKING | Read CSV (CPU/disk) | 15.0 s elapsed
+2026-10-29 17:26:28,448 INFO WORKING | Read CSV (CPU/disk) | 30.0 s elapsed
+2026-10-29 17:27:02,396 INFO WORKING | Read CSV (CPU/disk) | 64.0 s elapsed
+2026-10-29 17:27:05,232 INFO DONE | Read CSV (CPU/disk) | 66.8 s
+2026-10-29 17:27:05,238 INFO Loaded 1,338,401 rows
+2026-10-29 17:27:05,239 INFO START | Validate identifiers and duplicate PRs (CPU)
+2026-10-29 17:27:07,531 INFO DONE | Validate identifiers and duplicate PRs (CPU) | 2.3 s
+2026-10-29 17:27:07,728 INFO START | Create or reuse repository splits
+2026-10-29 17:27:09,376 INFO DONE | Create or reuse repository splits | 1.7 s
+2026-10-29 17:27:09,518 INFO Split train: 951,569 PRs, long fraction 0.243
+2026-10-29 17:27:09,546 INFO Split tune: 100,372 PRs, long fraction 0.262
+2026-10-29 17:27:09,571 INFO Split cutoff: 93,606 PRs, long fraction 0.253
+2026-10-29 17:27:09,612 INFO Split test: 192,854 PRs, long fraction 0.219
+2026-10-29 17:27:14,933 INFO START | Build compact features (CPU; no language-dictionary parsing)
+2026-10-29 17:27:29,952 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 15.0 s elapsed
+2026-10-29 17:27:45,015 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 30.1 s elapsed
+2026-10-29 17:28:00,100 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 45.2 s elapsed
+2026-10-29 17:28:16,030 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 61.1 s elapsed
+2026-10-29 17:28:38,959 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 84.0 s elapsed
+2026-10-29 17:28:53,993 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 99.0 s elapsed
+2026-10-29 17:29:16,363 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 121.4 s elapsed
+2026-10-29 17:30:19,848 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 184.9 s elapsed
+2026-10-29 17:30:34,907 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 200.0 s elapsed
+2026-10-29 17:30:49,960 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 215.0 s elapsed
+2026-10-29 17:31:05,012 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 230.1 s elapsed
+2026-10-29 17:31:20,068 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 245.1 s elapsed
+2026-10-29 17:31:35,127 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 260.2 s elapsed
+2026-10-29 17:31:50,176 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 275.2 s elapsed
+2026-10-29 17:32:05,221 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 290.3 s elapsed
+2026-10-29 17:32:20,276 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 305.3 s elapsed
+2026-10-29 17:32:35,326 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 320.4 s elapsed
+2026-10-29 17:32:50,380 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 335.4 s elapsed
+2026-10-29 17:33:05,430 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 350.5 s elapsed
+2026-10-29 17:33:20,478 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 365.5 s elapsed
+2026-10-29 17:33:35,535 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 380.6 s elapsed
+2026-10-29 17:33:50,587 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 395.6 s elapsed
+2026-10-29 17:34:05,647 INFO WORKING | Build compact features (CPU; no language-dictionary parsing) | 410.7 s elapsed
+2026-10-29 17:35:17,944 INFO DONE | Build compact features (CPU; no language-dictionary parsing) | 483.0 s
+2026-10-29 17:35:17,951 INFO Ready: 1,338,401 rows x 15 numeric features
+2026-10-29 17:35:17,964 INFO START | Fit numeric preprocessing on training PRs (CPU)
+2026-10-29 17:35:23,680 INFO DONE | Fit numeric preprocessing on training PRs (CPU) | 5.7 s
+2026-10-29 17:35:23,748 INFO START | Learn TF-IDF vocabulary on TRAINING text only (CPU)
+2026-10-29 17:35:38,775 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 15.0 s elapsed
+2026-10-29 17:35:53,834 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 30.1 s elapsed
+2026-10-29 17:36:08,882 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 45.1 s elapsed
+2026-10-29 17:36:23,943 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 60.2 s elapsed
+2026-10-29 17:36:39,003 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 75.2 s elapsed
+2026-10-29 17:36:54,056 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 90.3 s elapsed
+2026-10-29 17:37:09,112 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 105.4 s elapsed
+2026-10-29 17:37:24,159 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 120.4 s elapsed
+2026-10-29 17:37:39,218 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 135.5 s elapsed
+2026-10-29 17:37:54,263 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 150.5 s elapsed
+2026-10-29 17:38:09,319 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 165.6 s elapsed
+2026-10-29 17:38:24,372 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 180.6 s elapsed
+2026-10-29 17:38:39,417 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 195.7 s elapsed
+2026-10-29 17:38:54,469 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 210.7 s elapsed
+2026-10-29 17:39:09,521 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 225.8 s elapsed
+2026-10-29 17:39:24,572 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 240.8 s elapsed
+2026-10-29 17:39:39,629 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 255.9 s elapsed
+2026-10-29 17:39:54,687 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 270.9 s elapsed
+2026-10-29 17:40:09,734 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 286.0 s elapsed
+2026-10-29 17:40:24,783 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 301.0 s elapsed
+2026-10-29 17:40:39,832 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 316.1 s elapsed
+2026-10-29 17:40:54,890 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 331.1 s elapsed
+2026-10-29 17:41:09,943 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 346.2 s elapsed
+2026-10-29 17:41:25,002 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 361.2 s elapsed
+2026-10-29 17:41:40,051 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 376.3 s elapsed
+2026-10-29 17:41:55,104 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 391.3 s elapsed
+2026-10-29 17:42:10,153 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 406.4 s elapsed
+2026-10-29 17:42:25,203 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 421.5 s elapsed
+2026-10-29 17:42:40,258 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 436.5 s elapsed
+2026-10-29 17:42:55,307 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 451.5 s elapsed
+2026-10-29 17:43:10,361 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 466.6 s elapsed
+2026-10-29 17:43:25,412 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 481.7 s elapsed
+2026-10-29 17:43:40,470 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 496.7 s elapsed
+2026-10-29 17:43:55,521 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 511.8 s elapsed
+2026-10-29 17:44:10,580 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 526.8 s elapsed
+2026-10-29 17:44:25,641 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 541.9 s elapsed
+2026-10-29 17:44:40,703 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 557.0 s elapsed
+2026-10-29 17:44:55,755 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 572.0 s elapsed
+2026-10-29 17:45:10,808 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 587.1 s elapsed
+2026-10-29 17:45:46,990 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 623.2 s elapsed
+2026-10-29 17:47:15,432 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 711.7 s elapsed
+2026-10-29 17:47:30,489 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 726.7 s elapsed
+2026-10-29 17:48:13,891 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 770.1 s elapsed
+2026-10-29 17:48:29,094 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 785.3 s elapsed
+2026-10-29 17:48:44,118 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 800.4 s elapsed
+2026-10-29 17:49:00,117 INFO WORKING | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 816.4 s elapsed
+2026-10-29 17:49:07,099 INFO DONE | Learn TF-IDF vocabulary on TRAINING text only (CPU) | 823.3 s
+2026-10-29 17:49:07,101 INFO Vocabulary learned: 20,000 word/bigram features
+2026-10-29 17:49:07,103 INFO START | Transform tune text with frozen training vocabulary (CPU)
+2026-10-29 17:49:22,123 INFO WORKING | Transform tune text with frozen training vocabulary (CPU) | 15.0 s elapsed
+2026-10-29 17:49:37,180 INFO WORKING | Transform tune text with frozen training vocabulary (CPU) | 30.1 s elapsed
+2026-10-29 17:49:52,229 INFO WORKING | Transform tune text with frozen training vocabulary (CPU) | 45.1 s elapsed
+2026-10-29 17:50:07,287 INFO WORKING | Transform tune text with frozen training vocabulary (CPU) | 60.2 s elapsed
+2026-10-29 17:50:22,187 INFO DONE | Transform tune text with frozen training vocabulary (CPU) | 75.1 s
+2026-10-29 17:50:22,187 INFO START | Transform cutoff text with frozen training vocabulary (CPU)
+2026-10-29 17:50:37,215 INFO WORKING | Transform cutoff text with frozen training vocabulary (CPU) | 15.0 s elapsed
+2026-10-29 17:50:52,272 INFO WORKING | Transform cutoff text with frozen training vocabulary (CPU) | 30.1 s elapsed
+2026-10-29 17:51:07,324 INFO WORKING | Transform cutoff text with frozen training vocabulary (CPU) | 45.1 s elapsed
+2026-10-29 17:51:15,357 INFO DONE | Transform cutoff text with frozen training vocabulary (CPU) | 53.2 s
+2026-10-29 17:51:15,358 INFO START | Transform test text with frozen training vocabulary (CPU)
+2026-10-29 17:51:30,376 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 15.0 s elapsed
+2026-10-29 17:51:45,426 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 30.1 s elapsed
+2026-10-29 17:52:00,473 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 45.1 s elapsed
+2026-10-29 17:52:15,531 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 60.2 s elapsed
+2026-10-29 17:52:30,593 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 75.2 s elapsed
+2026-10-29 17:52:45,648 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 90.3 s elapsed
+2026-10-29 17:53:00,704 INFO WORKING | Transform test text with frozen training vocabulary (CPU) | 105.3 s elapsed
+2026-10-29 17:53:13,685 INFO DONE | Transform test text with frozen training vocabulary (CPU) | 118.3 s
+2026-10-29 17:53:13,687 INFO START | Fit 64-dimension SVD on TRAINING text only (CPU)
+2026-10-29 17:53:28,692 INFO WORKING | Fit 64-dimension SVD on TRAINING text only (CPU) | 15.0 s elapsed
+2026-10-29 17:53:43,695 INFO WORKING | Fit 64-dimension SVD on TRAINING text only (CPU) | 30.0 s elapsed
+2026-10-29 17:53:58,702 INFO WORKING | Fit 64-dimension SVD on TRAINING text only (CPU) | 45.0 s elapsed
+2026-10-29 17:54:03,946 INFO DONE | Fit 64-dimension SVD on TRAINING text only (CPU) | 50.2 s
+2026-10-29 17:54:03,947 INFO START | Prepare train numeric/text matrices (CPU)
+2026-10-29 17:54:11,134 INFO train matrices: {'logistic': (951569, 20015), 'xgboost': (951569, 79)}
+2026-10-29 17:54:11,135 INFO DONE | Prepare train numeric/text matrices (CPU) | 7.2 s
+2026-10-29 17:54:11,135 INFO START | Prepare tune numeric/text matrices (CPU)
+2026-10-29 17:54:11,769 INFO tune matrices: {'logistic': (100372, 20015), 'xgboost': (100372, 79)}
+2026-10-29 17:54:11,770 INFO DONE | Prepare tune numeric/text matrices (CPU) | 0.6 s
+2026-10-29 17:54:11,770 INFO START | Prepare cutoff numeric/text matrices (CPU)
+2026-10-29 17:54:12,432 INFO cutoff matrices: {'logistic': (93606, 20015), 'xgboost': (93606, 79)}
+2026-10-29 17:54:12,432 INFO DONE | Prepare cutoff numeric/text matrices (CPU) | 0.7 s
+2026-10-29 17:54:12,433 INFO START | Prepare test numeric/text matrices (CPU)
+2026-10-29 17:54:13,538 INFO test matrices: {'logistic': (192854, 20015), 'xgboost': (192854, 79)}
+2026-10-29 17:54:13,539 INFO DONE | Prepare test numeric/text matrices (CPU) | 1.1 s
+2026-10-29 17:54:13,660 INFO MODEL logistic | trial 1/3 | {"C": 0.1, "class_weight": null, "solver": "liblinear", "max_iter": 1000, "random_state": 42}
+2026-10-29 17:54:13,662 INFO START | Fit logistic trial 1 (cpu)
+2026-10-29 17:55:21,743 INFO WORKING | Fit logistic trial 1 (cpu) | 68.1 s elapsed
+2026-10-29 17:55:36,755 INFO WORKING | Fit logistic trial 1 (cpu) | 83.1 s elapsed
+2026-10-29 17:55:51,761 INFO WORKING | Fit logistic trial 1 (cpu) | 98.1 s elapsed
+2026-10-29 17:56:06,771 INFO WORKING | Fit logistic trial 1 (cpu) | 113.1 s elapsed
+2026-10-29 17:56:21,773 INFO WORKING | Fit logistic trial 1 (cpu) | 128.1 s elapsed
+2026-10-29 17:56:36,782 INFO WORKING | Fit logistic trial 1 (cpu) | 143.1 s elapsed
+2026-10-29 17:56:51,795 INFO WORKING | Fit logistic trial 1 (cpu) | 158.1 s elapsed
+2026-10-29 17:57:06,804 INFO WORKING | Fit logistic trial 1 (cpu) | 173.1 s elapsed
+2026-10-29 17:57:21,812 INFO WORKING | Fit logistic trial 1 (cpu) | 188.2 s elapsed
+2026-10-29 17:57:36,820 INFO WORKING | Fit logistic trial 1 (cpu) | 203.2 s elapsed
+2026-10-29 17:57:51,826 INFO WORKING | Fit logistic trial 1 (cpu) | 218.2 s elapsed
+2026-10-29 17:58:06,842 INFO WORKING | Fit logistic trial 1 (cpu) | 233.2 s elapsed
+2026-10-29 17:58:21,856 INFO WORKING | Fit logistic trial 1 (cpu) | 248.2 s elapsed
+2026-10-29 17:58:36,869 INFO WORKING | Fit logistic trial 1 (cpu) | 263.2 s elapsed
+2026-10-29 17:58:38,328 INFO DONE | Fit logistic trial 1 (cpu) | 264.7 s
+2026-10-29 17:58:38,329 INFO START | Evaluate logistic trial 1 on tuning PRs
+2026-10-29 17:58:38,512 INFO DONE | Evaluate logistic trial 1 on tuning PRs | 0.2 s
+2026-10-29 17:58:38,589 INFO TRIAL DONE | logistic | accuracy-cutoff tune accuracy 0.7484 | balanced-cutoff tune balanced accuracy 0.6597 | best trial 1
+2026-10-29 17:58:38,589 INFO MODEL logistic | trial 2/3 | {"C": 1.0, "class_weight": null, "solver": "liblinear", "max_iter": 1000, "random_state": 42}
+2026-10-29 17:58:38,591 INFO START | Fit logistic trial 2 (cpu)
+2026-10-29 17:58:53,597 INFO WORKING | Fit logistic trial 2 (cpu) | 15.0 s elapsed
+2026-10-29 17:59:08,610 INFO WORKING | Fit logistic trial 2 (cpu) | 30.0 s elapsed
+2026-10-29 17:59:23,624 INFO WORKING | Fit logistic trial 2 (cpu) | 45.0 s elapsed
+2026-10-29 17:59:38,636 INFO WORKING | Fit logistic trial 2 (cpu) | 60.0 s elapsed
+2026-10-29 17:59:53,649 INFO WORKING | Fit logistic trial 2 (cpu) | 75.0 s elapsed
+2026-10-29 18:00:08,652 INFO WORKING | Fit logistic trial 2 (cpu) | 90.1 s elapsed
+2026-10-29 18:00:23,657 INFO WORKING | Fit logistic trial 2 (cpu) | 105.1 s elapsed
+2026-10-29 18:00:38,665 INFO WORKING | Fit logistic trial 2 (cpu) | 120.1 s elapsed
+2026-10-29 18:00:53,673 INFO WORKING | Fit logistic trial 2 (cpu) | 135.1 s elapsed
+2026-10-29 18:01:08,686 INFO WORKING | Fit logistic trial 2 (cpu) | 150.1 s elapsed
+2026-10-29 18:01:23,690 INFO WORKING | Fit logistic trial 2 (cpu) | 165.1 s elapsed
+2026-10-29 18:01:38,692 INFO WORKING | Fit logistic trial 2 (cpu) | 180.1 s elapsed
+2026-10-29 18:01:53,699 INFO WORKING | Fit logistic trial 2 (cpu) | 195.1 s elapsed
+2026-10-29 18:02:08,702 INFO WORKING | Fit logistic trial 2 (cpu) | 210.1 s elapsed
+2026-10-29 18:02:23,709 INFO WORKING | Fit logistic trial 2 (cpu) | 225.1 s elapsed
+2026-10-29 18:02:38,722 INFO WORKING | Fit logistic trial 2 (cpu) | 240.1 s elapsed
+2026-10-29 18:02:53,730 INFO WORKING | Fit logistic trial 2 (cpu) | 255.1 s elapsed
+2026-10-29 18:03:08,731 INFO WORKING | Fit logistic trial 2 (cpu) | 270.1 s elapsed
+2026-10-29 18:03:23,743 INFO WORKING | Fit logistic trial 2 (cpu) | 285.1 s elapsed
+2026-10-29 18:03:38,750 INFO WORKING | Fit logistic trial 2 (cpu) | 300.2 s elapsed
+2026-10-29 18:04:04,800 INFO WORKING | Fit logistic trial 2 (cpu) | 326.2 s elapsed
+2026-10-29 18:04:19,810 INFO WORKING | Fit logistic trial 2 (cpu) | 341.2 s elapsed
+2026-10-29 18:04:34,825 INFO WORKING | Fit logistic trial 2 (cpu) | 356.2 s elapsed
+2026-10-29 18:04:49,831 INFO WORKING | Fit logistic trial 2 (cpu) | 371.2 s elapsed
+2026-10-29 18:05:04,835 INFO WORKING | Fit logistic trial 2 (cpu) | 386.2 s elapsed
+2026-10-29 18:05:19,849 INFO WORKING | Fit logistic trial 2 (cpu) | 401.2 s elapsed
+2026-10-29 18:05:34,859 INFO WORKING | Fit logistic trial 2 (cpu) | 416.3 s elapsed
+2026-10-29 18:05:49,861 INFO WORKING | Fit logistic trial 2 (cpu) | 431.3 s elapsed
+2026-10-29 18:06:04,876 INFO WORKING | Fit logistic trial 2 (cpu) | 446.3 s elapsed
+2026-10-29 18:06:19,881 INFO WORKING | Fit logistic trial 2 (cpu) | 461.3 s elapsed
+2026-10-29 18:06:34,881 INFO WORKING | Fit logistic trial 2 (cpu) | 476.3 s elapsed
+2026-10-29 18:06:49,894 INFO WORKING | Fit logistic trial 2 (cpu) | 491.3 s elapsed
+2026-10-29 18:07:04,897 INFO WORKING | Fit logistic trial 2 (cpu) | 506.3 s elapsed
+2026-10-29 18:07:19,903 INFO WORKING | Fit logistic trial 2 (cpu) | 521.3 s elapsed
+2026-10-29 18:07:34,917 INFO WORKING | Fit logistic trial 2 (cpu) | 536.3 s elapsed
+2026-10-29 18:07:49,925 INFO WORKING | Fit logistic trial 2 (cpu) | 551.3 s elapsed
+2026-10-29 18:07:56,301 INFO DONE | Fit logistic trial 2 (cpu) | 557.7 s
+2026-10-29 18:07:56,302 INFO START | Evaluate logistic trial 2 on tuning PRs
+2026-10-29 18:07:56,545 INFO DONE | Evaluate logistic trial 2 on tuning PRs | 0.2 s
+2026-10-29 18:07:56,549 INFO TRIAL DONE | logistic | accuracy-cutoff tune accuracy 0.7458 | balanced-cutoff tune balanced accuracy 0.6589 | best trial 1
+2026-10-29 18:07:56,549 INFO MODEL logistic | trial 3/3 | {"C": 10.0, "class_weight": null, "solver": "liblinear", "max_iter": 1000, "random_state": 42}
+2026-10-29 18:07:56,550 INFO START | Fit logistic trial 3 (cpu)
+2026-10-29 18:08:11,559 INFO WORKING | Fit logistic trial 3 (cpu) | 15.0 s elapsed
+2026-10-29 18:08:26,569 INFO WORKING | Fit logistic trial 3 (cpu) | 30.0 s elapsed
+2026-10-29 18:08:41,582 INFO WORKING | Fit logistic trial 3 (cpu) | 45.0 s elapsed
+2026-10-29 18:10:52,182 INFO WORKING | Fit logistic trial 3 (cpu) | 175.6 s elapsed
+2026-10-29 18:11:07,183 INFO WORKING | Fit logistic trial 3 (cpu) | 190.6 s elapsed
+2026-10-29 18:11:22,194 INFO WORKING | Fit logistic trial 3 (cpu) | 205.6 s elapsed
+2026-10-29 18:11:37,195 INFO WORKING | Fit logistic trial 3 (cpu) | 220.6 s elapsed
+2026-10-29 18:11:52,204 INFO WORKING | Fit logistic trial 3 (cpu) | 235.7 s elapsed
+2026-10-29 18:12:07,214 INFO WORKING | Fit logistic trial 3 (cpu) | 250.7 s elapsed
+2026-10-29 18:12:22,228 INFO WORKING | Fit logistic trial 3 (cpu) | 265.7 s elapsed
+2026-10-29 18:12:37,241 INFO WORKING | Fit logistic trial 3 (cpu) | 280.7 s elapsed
+2026-10-29 18:12:52,247 INFO WORKING | Fit logistic trial 3 (cpu) | 295.7 s elapsed
+2026-10-29 18:13:07,249 INFO WORKING | Fit logistic trial 3 (cpu) | 310.7 s elapsed
+2026-10-29 18:13:22,257 INFO WORKING | Fit logistic trial 3 (cpu) | 325.7 s elapsed
+2026-10-29 18:13:37,258 INFO WORKING | Fit logistic trial 3 (cpu) | 340.7 s elapsed
+2026-10-29 18:13:52,270 INFO WORKING | Fit logistic trial 3 (cpu) | 355.7 s elapsed
+2026-10-29 18:15:25,622 INFO WORKING | Fit logistic trial 3 (cpu) | 449.1 s elapsed
+2026-10-29 18:15:40,625 INFO WORKING | Fit logistic trial 3 (cpu) | 464.1 s elapsed
+2026-10-29 18:15:55,639 INFO WORKING | Fit logistic trial 3 (cpu) | 479.1 s elapsed
+2026-10-29 18:16:10,642 INFO WORKING | Fit logistic trial 3 (cpu) | 494.1 s elapsed
+2026-10-29 18:16:25,643 INFO WORKING | Fit logistic trial 3 (cpu) | 509.1 s elapsed
+2026-10-29 18:16:40,646 INFO WORKING | Fit logistic trial 3 (cpu) | 524.1 s elapsed
+2026-10-29 18:16:55,660 INFO WORKING | Fit logistic trial 3 (cpu) | 539.1 s elapsed
+2026-10-29 18:17:10,668 INFO WORKING | Fit logistic trial 3 (cpu) | 554.1 s elapsed
+2026-10-29 18:17:25,670 INFO WORKING | Fit logistic trial 3 (cpu) | 569.1 s elapsed
+2026-10-29 18:17:40,686 INFO WORKING | Fit logistic trial 3 (cpu) | 584.1 s elapsed
+2026-10-29 18:17:55,701 INFO WORKING | Fit logistic trial 3 (cpu) | 599.2 s elapsed
+2026-10-29 18:18:10,712 INFO WORKING | Fit logistic trial 3 (cpu) | 614.2 s elapsed
+2026-10-29 18:18:25,719 INFO WORKING | Fit logistic trial 3 (cpu) | 629.2 s elapsed
+2026-10-29 18:18:40,727 INFO WORKING | Fit logistic trial 3 (cpu) | 644.2 s elapsed
+2026-10-29 18:20:19,988 INFO WORKING | Fit logistic trial 3 (cpu) | 743.4 s elapsed
+2026-10-29 18:20:34,994 INFO WORKING | Fit logistic trial 3 (cpu) | 758.4 s elapsed
+2026-10-29 18:20:50,000 INFO WORKING | Fit logistic trial 3 (cpu) | 773.5 s elapsed
+2026-10-29 18:21:05,014 INFO WORKING | Fit logistic trial 3 (cpu) | 788.5 s elapsed
+2026-10-29 18:21:20,028 INFO WORKING | Fit logistic trial 3 (cpu) | 803.5 s elapsed
+2026-10-29 18:21:35,041 INFO WORKING | Fit logistic trial 3 (cpu) | 818.5 s elapsed
+2026-10-29 18:21:50,043 INFO WORKING | Fit logistic trial 3 (cpu) | 833.5 s elapsed
+2026-10-29 18:22:05,047 INFO WORKING | Fit logistic trial 3 (cpu) | 848.5 s elapsed
+2026-10-29 18:22:20,052 INFO WORKING | Fit logistic trial 3 (cpu) | 863.5 s elapsed
+2026-10-29 18:22:35,061 INFO WORKING | Fit logistic trial 3 (cpu) | 878.5 s elapsed
+2026-10-29 18:22:50,066 INFO WORKING | Fit logistic trial 3 (cpu) | 893.5 s elapsed
+2026-10-29 18:23:05,081 INFO WORKING | Fit logistic trial 3 (cpu) | 908.5 s elapsed
+2026-10-29 18:23:20,091 INFO WORKING | Fit logistic trial 3 (cpu) | 923.5 s elapsed
+2026-10-29 18:23:35,092 INFO WORKING | Fit logistic trial 3 (cpu) | 938.5 s elapsed
+2026-10-29 18:23:50,105 INFO WORKING | Fit logistic trial 3 (cpu) | 953.6 s elapsed
+2026-10-29 18:24:05,111 INFO WORKING | Fit logistic trial 3 (cpu) | 968.6 s elapsed
+2026-10-29 18:24:20,118 INFO WORKING | Fit logistic trial 3 (cpu) | 983.6 s elapsed
+2026-10-29 18:25:28,888 INFO WORKING | Fit logistic trial 3 (cpu) | 1052.3 s elapsed
+2026-10-29 18:25:43,893 INFO WORKING | Fit logistic trial 3 (cpu) | 1067.3 s elapsed
+2026-10-29 18:25:58,908 INFO WORKING | Fit logistic trial 3 (cpu) | 1082.4 s elapsed
+2026-10-29 18:26:13,917 INFO WORKING | Fit logistic trial 3 (cpu) | 1097.4 s elapsed
+2026-10-29 18:26:28,924 INFO WORKING | Fit logistic trial 3 (cpu) | 1112.4 s elapsed
+2026-10-29 18:26:43,926 INFO WORKING | Fit logistic trial 3 (cpu) | 1127.4 s elapsed
+2026-10-29 18:26:58,939 INFO WORKING | Fit logistic trial 3 (cpu) | 1142.4 s elapsed
+2026-10-29 18:27:13,951 INFO WORKING | Fit logistic trial 3 (cpu) | 1157.4 s elapsed
+2026-10-29 18:27:28,958 INFO WORKING | Fit logistic trial 3 (cpu) | 1172.4 s elapsed
+2026-10-29 18:27:43,967 INFO WORKING | Fit logistic trial 3 (cpu) | 1187.4 s elapsed
+2026-10-29 18:27:58,972 INFO WORKING | Fit logistic trial 3 (cpu) | 1202.4 s elapsed
+2026-10-29 18:28:13,980 INFO WORKING | Fit logistic trial 3 (cpu) | 1217.4 s elapsed
+2026-10-29 18:28:28,991 INFO WORKING | Fit logistic trial 3 (cpu) | 1232.4 s elapsed
+2026-10-29 18:40:52,109 INFO WORKING | Fit logistic trial 3 (cpu) | 1975.6 s elapsed
+2026-10-29 18:41:07,110 INFO WORKING | Fit logistic trial 3 (cpu) | 1990.6 s elapsed
+2026-10-29 18:41:22,115 INFO WORKING | Fit logistic trial 3 (cpu) | 2005.6 s elapsed
+2026-10-29 18:41:37,122 INFO WORKING | Fit logistic trial 3 (cpu) | 2020.6 s elapsed
+2026-10-29 18:41:52,135 INFO WORKING | Fit logistic trial 3 (cpu) | 2035.6 s elapsed
+2026-10-29 18:42:07,145 INFO WORKING | Fit logistic trial 3 (cpu) | 2050.6 s elapsed
+2026-10-29 18:42:22,153 INFO WORKING | Fit logistic trial 3 (cpu) | 2065.6 s elapsed
+2026-10-29 18:42:37,161 INFO WORKING | Fit logistic trial 3 (cpu) | 2080.6 s elapsed
+2026-10-29 18:42:52,171 INFO WORKING | Fit logistic trial 3 (cpu) | 2095.6 s elapsed
+2026-10-29 18:43:07,179 INFO WORKING | Fit logistic trial 3 (cpu) | 2110.6 s elapsed
+2026-10-29 18:43:22,194 INFO WORKING | Fit logistic trial 3 (cpu) | 2125.6 s elapsed
+2026-10-29 18:43:37,204 INFO WORKING | Fit logistic trial 3 (cpu) | 2140.7 s elapsed
+2026-10-29 18:43:52,216 INFO WORKING | Fit logistic trial 3 (cpu) | 2155.7 s elapsed
+2026-10-29 18:44:07,219 INFO WORKING | Fit logistic trial 3 (cpu) | 2170.7 s elapsed
+2026-10-29 18:44:22,229 INFO WORKING | Fit logistic trial 3 (cpu) | 2185.7 s elapsed
+2026-10-29 18:44:37,239 INFO WORKING | Fit logistic trial 3 (cpu) | 2200.7 s elapsed
+2026-10-29 18:44:52,246 INFO WORKING | Fit logistic trial 3 (cpu) | 2215.7 s elapsed
+2026-10-29 18:45:07,247 INFO WORKING | Fit logistic trial 3 (cpu) | 2230.7 s elapsed
+2026-10-29 18:45:22,258 INFO WORKING | Fit logistic trial 3 (cpu) | 2245.7 s elapsed
+2026-10-29 18:45:37,273 INFO WORKING | Fit logistic trial 3 (cpu) | 2260.7 s elapsed
+2026-10-29 18:45:52,276 INFO WORKING | Fit logistic trial 3 (cpu) | 2275.7 s elapsed
+2026-10-29 18:46:07,290 INFO WORKING | Fit logistic trial 3 (cpu) | 2290.7 s elapsed
+2026-10-29 18:46:22,291 INFO WORKING | Fit logistic trial 3 (cpu) | 2305.7 s elapsed
+2026-10-29 18:46:37,299 INFO WORKING | Fit logistic trial 3 (cpu) | 2320.8 s elapsed
+2026-10-29 18:46:52,310 INFO WORKING | Fit logistic trial 3 (cpu) | 2335.8 s elapsed
+2026-10-29 18:47:07,313 INFO WORKING | Fit logistic trial 3 (cpu) | 2350.8 s elapsed
+2026-10-29 18:47:22,318 INFO WORKING | Fit logistic trial 3 (cpu) | 2365.8 s elapsed
+2026-10-29 18:47:26,660 INFO DONE | Fit logistic trial 3 (cpu) | 2370.1 s
+2026-10-29 18:47:26,660 INFO START | Evaluate logistic trial 3 on tuning PRs
+2026-10-29 18:47:26,906 INFO DONE | Evaluate logistic trial 3 on tuning PRs | 0.2 s
+2026-10-29 18:47:26,912 INFO TRIAL DONE | logistic | accuracy-cutoff tune accuracy 0.7441 | balanced-cutoff tune balanced accuracy 0.6563 | best trial 1
+2026-10-29 18:47:26,920 INFO MODEL xgboost | trial 1/3 | {"n_estimators": 1000, "max_depth": 4, "min_child_weight": 10, "learning_rate": 0.05, "subsample": 0.8, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 50}
+2026-10-29 18:47:26,931 INFO START | Fit xgboost trial 1 (cpu)
+2026-10-29 18:47:41,943 INFO WORKING | Fit xgboost trial 1 (cpu) | 15.0 s elapsed
+2026-10-29 18:47:56,950 INFO WORKING | Fit xgboost trial 1 (cpu) | 30.0 s elapsed
+2026-10-29 18:48:11,959 INFO WORKING | Fit xgboost trial 1 (cpu) | 45.0 s elapsed
+2026-10-29 18:48:26,962 INFO WORKING | Fit xgboost trial 1 (cpu) | 60.0 s elapsed
+2026-10-29 18:48:41,965 INFO WORKING | Fit xgboost trial 1 (cpu) | 75.0 s elapsed
+2026-10-29 18:48:56,969 INFO WORKING | Fit xgboost trial 1 (cpu) | 90.0 s elapsed
+2026-10-29 18:49:11,974 INFO WORKING | Fit xgboost trial 1 (cpu) | 105.0 s elapsed
+2026-10-29 18:49:26,984 INFO WORKING | Fit xgboost trial 1 (cpu) | 120.1 s elapsed
+2026-10-29 18:49:29,619 INFO DONE | Fit xgboost trial 1 (cpu) | 122.7 s
+2026-10-29 18:49:29,623 INFO XGBoost actual training device=cpu; best boosting iteration=997
+2026-10-29 18:49:29,629 INFO START | Evaluate xgboost trial 1 on tuning PRs
+2026-10-29 18:49:30,241 INFO DONE | Evaluate xgboost trial 1 on tuning PRs | 0.6 s
+2026-10-29 18:49:30,307 INFO TRIAL DONE | xgboost | accuracy-cutoff tune accuracy 0.7503 | balanced-cutoff tune balanced accuracy 0.6522 | best trial 1
+2026-10-29 18:49:30,308 INFO MODEL xgboost | trial 2/3 | {"n_estimators": 1000, "max_depth": 6, "min_child_weight": 10, "learning_rate": 0.05, "subsample": 0.8, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 50}
+2026-10-29 18:49:30,308 INFO START | Fit xgboost trial 2 (cpu)
+2026-10-29 18:49:45,311 INFO WORKING | Fit xgboost trial 2 (cpu) | 15.0 s elapsed
+2026-10-29 18:50:00,324 INFO WORKING | Fit xgboost trial 2 (cpu) | 30.0 s elapsed
+2026-10-29 18:50:15,326 INFO WORKING | Fit xgboost trial 2 (cpu) | 45.0 s elapsed
+2026-10-29 18:50:30,329 INFO WORKING | Fit xgboost trial 2 (cpu) | 60.0 s elapsed
+2026-10-29 18:50:45,334 INFO WORKING | Fit xgboost trial 2 (cpu) | 75.0 s elapsed
+2026-10-29 18:51:00,349 INFO WORKING | Fit xgboost trial 2 (cpu) | 90.0 s elapsed
+2026-10-29 18:51:15,365 INFO WORKING | Fit xgboost trial 2 (cpu) | 105.0 s elapsed
+2026-10-29 18:51:30,379 INFO WORKING | Fit xgboost trial 2 (cpu) | 120.1 s elapsed
+2026-10-29 18:51:45,393 INFO WORKING | Fit xgboost trial 2 (cpu) | 135.1 s elapsed
+2026-10-29 18:52:00,281 INFO DONE | Fit xgboost trial 2 (cpu) | 150.0 s
+2026-10-29 18:52:00,286 INFO XGBoost actual training device=cpu; best boosting iteration=998
+2026-10-29 18:52:00,291 INFO START | Evaluate xgboost trial 2 on tuning PRs
+2026-10-29 18:52:01,176 INFO DONE | Evaluate xgboost trial 2 on tuning PRs | 0.9 s
+2026-10-29 18:52:01,334 INFO TRIAL DONE | xgboost | accuracy-cutoff tune accuracy 0.7533 | balanced-cutoff tune balanced accuracy 0.6598 | best trial 2
+2026-10-29 18:52:01,335 INFO MODEL xgboost | trial 3/3 | {"n_estimators": 1000, "max_depth": 8, "min_child_weight": 20, "learning_rate": 0.05, "subsample": 0.9, "colsample_bytree": 1.0, "reg_lambda": 10.0, "scale_pos_weight": 1.0, "objective": "binary:logistic", "eval_metric": "logloss", "tree_method": "hist", "device": "cpu", "n_jobs": 4, "random_state": 42, "early_stopping_rounds": 50}
+2026-10-29 18:52:01,335 INFO START | Fit xgboost trial 3 (cpu)
+2026-10-29 18:52:16,347 INFO WORKING | Fit xgboost trial 3 (cpu) | 15.0 s elapsed
+2026-10-29 18:52:31,360 INFO WORKING | Fit xgboost trial 3 (cpu) | 30.0 s elapsed
+2026-10-29 18:52:46,366 INFO WORKING | Fit xgboost trial 3 (cpu) | 45.0 s elapsed
+2026-10-29 18:53:01,374 INFO WORKING | Fit xgboost trial 3 (cpu) | 60.0 s elapsed
+2026-10-29 18:53:16,386 INFO WORKING | Fit xgboost trial 3 (cpu) | 75.1 s elapsed
+2026-10-29 18:53:31,388 INFO WORKING | Fit xgboost trial 3 (cpu) | 90.1 s elapsed
+2026-10-29 18:53:46,400 INFO WORKING | Fit xgboost trial 3 (cpu) | 105.1 s elapsed
+2026-10-29 18:54:01,404 INFO WORKING | Fit xgboost trial 3 (cpu) | 120.1 s elapsed
+2026-10-29 18:54:16,418 INFO WORKING | Fit xgboost trial 3 (cpu) | 135.1 s elapsed
+2026-10-29 18:54:31,421 INFO WORKING | Fit xgboost trial 3 (cpu) | 150.1 s elapsed
+2026-10-29 18:54:46,432 INFO WORKING | Fit xgboost trial 3 (cpu) | 165.1 s elapsed
+2026-10-29 18:55:01,433 INFO WORKING | Fit xgboost trial 3 (cpu) | 180.1 s elapsed
+2026-10-29 18:55:04,163 INFO DONE | Fit xgboost trial 3 (cpu) | 182.8 s
+2026-10-29 18:55:04,168 INFO XGBoost actual training device=cpu; best boosting iteration=985
+2026-10-29 18:55:04,172 INFO START | Evaluate xgboost trial 3 on tuning PRs
+2026-10-29 18:55:05,600 INFO DONE | Evaluate xgboost trial 3 on tuning PRs | 1.4 s
+2026-10-29 18:55:06,036 INFO TRIAL DONE | xgboost | accuracy-cutoff tune accuracy 0.7552 | balanced-cutoff tune balanced accuracy 0.6615 | best trial 3
+2026-10-29 18:55:06,634 INFO Blend selected on tuning data: logistic weight 0.25
+2026-10-29 18:55:06,640 INFO CHAMPION selected on tuning data: blend (accuracy 0.7567)
+2026-10-29 18:55:06,640 INFO START | Choose both final cutoffs on separate validation repositories
+2026-10-29 18:55:08,342 INFO DONE | Choose both final cutoffs on separate validation repositories | 1.7 s
+2026-10-29 18:55:08,346 INFO START | Save frozen preprocessing, models, and cutoffs
+2026-10-29 18:55:09,968 INFO DONE | Save frozen preprocessing, models, and cutoffs | 1.6 s
+2026-10-29 18:55:09,968 INFO START | Evaluate frozen models/cutoffs on held-out test PRs
+2026-10-29 18:55:12,944 INFO DONE | Evaluate frozen models/cutoffs on held-out test PRs | 3.0 s
+2026-10-29 18:55:17,719 INFO START | Save metrics, reports, and predictions
+2026-10-29 18:55:25,636 INFO DONE | Save metrics, reports, and predictions | 7.9 s
+2026-10-29 18:55:25,695 INFO Accuracy target met for validation-selected champion: False; recall goal met: False
+2026-10-29 18:55:25,698 INFO RUN COMPLETE | 89.5 minutes | results=C:\Users\sydne\OneDrive\Documents\pr-complexity-code\classifier_results_v2

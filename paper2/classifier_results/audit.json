@@ -1,0 +1,30 @@
+{
+  "loaded_rows": 1338401,
+  "invalid_ids": 0,
+  "duplicates_removed": 0,
+  "invalid_durations": 0,
+  "retained_rows": 1338401,
+  "repositories": 59474,
+  "splits": {
+    "train": {
+      "rows": 951569,
+      "repositories": 41631,
+      "positive_fraction": 0.24255729221948172
+    },
+    "tune": {
+      "rows": 100372,
+      "repositories": 4460,
+      "positive_fraction": 0.2621348583270235
+    },
+    "cutoff": {
+      "rows": 93606,
+      "repositories": 4461,
+      "positive_fraction": 0.25335982736149393
+    },
+    "test": {
+      "rows": 192854,
+      "repositories": 8922,
+      "positive_fraction": 0.219300610824769
+    }
+  }
+}

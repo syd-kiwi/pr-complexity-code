@@ -1,0 +1,4 @@
+2026-10-29 15:59:10,986 INFO Task: 0=within 1440 minutes; 1=OVER 1440 minutes
+2026-10-29 15:59:10,986 INFO Goal 85.0% accuracy AND >= 50.0% recall for each class; attainment is unknown until evaluation
+2026-10-29 15:59:10,987 INFO START | Read CSV (CPU/disk)
+2026-10-29 15:59:10,989 ERROR STOPPED | Read CSV (CPU/disk) | 0.0 s

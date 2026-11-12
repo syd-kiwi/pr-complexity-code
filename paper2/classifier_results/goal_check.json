@@ -1,0 +1,10 @@
+{
+  "target_accuracy": 0.85,
+  "test_accuracy": 0.6721457683014094,
+  "accuracy_target_met": false,
+  "minimum_class_recall": 0.5,
+  "test_recall_floors_met": false,
+  "full_goal_met": false,
+  "accuracy_gain_over_baseline": -0.10855362087382159,
+  "note": "Observed test result, not a guarantee for future datasets. Do not retune on this test set."
+}

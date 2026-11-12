@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "arguments": {
+    "input": ".\\data\\cleaned_public.csv",
+    "output": ".\\classifier_results_v2",
+    "feature_set": "tfidf",
+    "models": [
+      "logistic",
+      "xgboost"
+    ],
+    "device": "cpu",
+    "splits": null,
+    "trials": 3,
+    "max_trees": 1000,
+    "patience": 50,
+    "lr_max_iter": 1000,
+    "tfidf_features": 20000,
+    "min_df": 2,
+    "text_dimensions": 64,
+    "jobs": 4,
+    "seed": 42,
+    "threshold_minutes": 1440.0,
+    "target_accuracy": 0.85,
+    "min_class_recall": 0.5,
+    "progress_interval": 15.0,
+    "predict_from": null
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "scipy": "1.13.1",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.6.0",
+    "xgboost": "3.4.1"
+  },
+  "selection": "Model settings and blend weight: highest tuning accuracy; final cutoffs: separate cutoff subset",
+  "test_used_for_selection": false,
+  "positive_class": "over_threshold",
+  "snapshot_timing_verified": false,
+  "prior_test_results_explored": true
+}

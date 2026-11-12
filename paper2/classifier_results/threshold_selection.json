@@ -1,0 +1,10 @@
+{
+  "selected_trial": 3,
+  "probability_cutoff": 0.27929946780204773,
+  "accuracy": 0.6524368096062219,
+  "balanced_accuracy": 0.6021097003239628,
+  "recall_over_threshold": 0.5000843312531624,
+  "recall_within_threshold": 0.7041350693947632,
+  "recall_constraints_met": true,
+  "selection_rule": "accuracy_subject_to_both_recall_floors"
+}

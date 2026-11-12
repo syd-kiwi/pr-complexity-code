@@ -1,0 +1,22 @@
+{
+  "champion_selected_on_tune": "blend",
+  "target_accuracy": 0.85,
+  "minimum_class_recall": 0.5,
+  "policies": {
+    "accuracy": {
+      "test_accuracy": 0.7930455162973026,
+      "accuracy_target_met": false,
+      "test_recall_floors_met": false,
+      "full_goal_met": false,
+      "accuracy_gain_over_baseline": 0.012346127122071615
+    },
+    "balanced": {
+      "test_accuracy": 0.6516898793906271,
+      "accuracy_target_met": false,
+      "test_recall_floors_met": true,
+      "full_goal_met": false,
+      "accuracy_gain_over_baseline": -0.1290095097846039
+    }
+  },
+  "note": "85% is not guaranteed; cutoff tradeoffs are reported separately. Reused test results are exploratory."
+}

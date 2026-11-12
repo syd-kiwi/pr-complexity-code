@@ -1,0 +1,72 @@
+{
+  "row_order": [
+    "actual_within_threshold",
+    "actual_over_threshold"
+  ],
+  "column_order": [
+    "predicted_within_threshold",
+    "predicted_over_threshold"
+  ],
+  "matrices": {
+    "logistic_accuracy": [
+      [
+        146282,
+        4279
+      ],
+      [
+        36394,
+        5899
+      ]
+    ],
+    "logistic_balanced": [
+      [
+        96353,
+        54208
+      ],
+      [
+        12196,
+        30097
+      ]
+    ],
+    "xgboost_accuracy": [
+      [
+        144407,
+        6154
+      ],
+      [
+        33945,
+        8348
+      ]
+    ],
+    "xgboost_balanced": [
+      [
+        95490,
+        55071
+      ],
+      [
+        13229,
+        29064
+      ]
+    ],
+    "blend_accuracy": [
+      [
+        144042,
+        6519
+      ],
+      [
+        33393,
+        8900
+      ]
+    ],
+    "blend_balanced": [
+      [
+        96082,
+        54479
+      ],
+      [
+        12694,
+        29599
+      ]
+    ]
+  }
+}
