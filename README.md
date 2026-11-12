@@ -4,15 +4,16 @@ Research code for measuring pull request (PR) complexity, comparing PR character
 
 ## Start here
 
-| What you want to do | Where to start |
-| --- | --- |
-| Build a dataset from the internal source | [Notebook 1](notebooks/1.build_customer_dataset.ipynb) |
-| Clean an existing PR dataset | [Notebook 2](notebooks/2.clean_dataset.ipynb) |
-| Assign keyword categories and calculate complexity | [Notebook 3](notebooks/3.categorize_prs_keywords.ipynb), then [Notebook 4](notebooks/4.calculate_pr_complexity_score.ipynb) |
-| Check how individual score components affect the analysis | [Notebook 5](notebooks/5.component_ablation_analysis.ipynb) |
-| Compare Copilot access groups and train merge time models | [Merge time experiments](paper2/README.md) |
+Choose the workflow that matches your task:
 
-**For the notebook workflow, follow notebooks 1–5 in order. If you already have compatible PR metadata, start at notebook 2.** Source datasets are not included.
+| Task | Start here |
+| --- | --- |
+| Prepare PR data and calculate complexity | Follow the [notebook workflow](#notebook-workflow) |
+| Compare PRs by Copilot access | Run the [RQ1 comparison](#compare-copilot-access-groups) |
+| Compare merge time prediction models | Run the [merge time experiments](#compare-merge-time-models) |
+| Find existing charts and tables | Browse [results/](results/) |
+
+Source datasets are not included. You need compatible PR metadata to run the analyses.
 
 ## Research focus
 
@@ -44,6 +45,8 @@ Activate it:
 
 ### Notebook workflow
 
+Follow notebooks 1–5 in order. If you already have compatible PR metadata, start at notebook 2. Use this workflow to calculate the complexity score; the merge time scripts above can run independently.
+
 The root `requirements.txt` currently contains unresolved Git merge conflict markers and cannot be installed as written. For the core notebook workflow, install the main packages directly:
 
 ```bash
@@ -57,14 +60,46 @@ Open the notebooks from `notebooks/`. Their relative paths assume that folder is
 
 ### Merge time experiments
 
-The `paper2/` scripts have a separate requirements file and can run independently of the root requirements:
+The `paper2/` scripts have a separate requirements file and run independently of the root requirements:
 
 ```bash
 python -m pip install -r paper2/requirements.txt
-python paper2/run_pipeline.py --help
 ```
 
-Run script commands from the repository root. See [paper2/README.md](paper2/README.md) for CPU development runs, GPU runs, text features, and saved model evaluation.
+Run the following commands from the repository root. The examples use `data/cleaned_public.csv`; replace that path with your input file. Each output directory must be new or empty.
+
+### Compare Copilot access groups
+
+Prepare the data, then generate descriptive comparisons without training models:
+
+```bash
+python paper2/prepare.py --input data/cleaned_public.csv --output paper2/outputs/prepared01 --scope all
+python paper2/analyze.py --input paper2/outputs/prepared01/prepared.parquet --output paper2/outputs/rq1_01
+```
+
+This produces group summaries, correlations, within-repository merge time comparisons, and a cumulative merge time figure. Start with `by_had_copilot_seat.csv` and `within_repository_effect.json` in `paper2/outputs/rq1_01/`.
+
+The example retains public and private rows with `--scope all`. Use `--scope open-source` or `--scope private` for a specific population. Check `prepared01/audit.json` for actual row counts and filtering.
+
+### Compare merge time models
+
+For a small CPU development run:
+
+```bash
+python paper2/run_pipeline.py --input data/cleaned_public.csv --output paper2/outputs/dev01 --scope all --device cpu --trials 1 --trees 30 --permutation-rows 100
+```
+
+Use a small compatible dataset with enough repositories and examples of all three duration classes. These settings check the workflow; they are not a final experiment.
+
+For the standard GPU experiment:
+
+```bash
+python paper2/run_pipeline.py --input data/cleaned_public.csv --output paper2/outputs/run01 --scope all --device cuda:0
+```
+
+The pipeline prepares the data, runs the Copilot comparisons, and compares XGBoost, logistic regression, and a majority baseline. It holds out entire repositories by default. GPU training requires a compatible NVIDIA setup.
+
+See [paper2/README.md](paper2/README.md) for feature sets, evaluation metrics, text features, ordinal classification, duration regression, and saved model evaluation.
 
 ## Notebook workflow
 
