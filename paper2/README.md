@@ -4,7 +4,7 @@ This folder compares PRs by Copilot access and tests models that predict merge t
 
 ## Research questions
 
-1. **RQ1:** How do PR size, language composition, review activity, and merge time differ between authors with and without Copilot access?
+1. **RQ1:** How do title and body length, PR size, language composition, review activity, and merge time differ between authors with and without Copilot access?
 2. **RQ2:** Can machine learning predict PR merge time based on limited features?
 
 ## Setup
@@ -17,7 +17,18 @@ python -m pip install -r paper2/requirements.txt
 
 The examples use `data/cleaned_public.csv`. Change that path if your file is somewhere else. Use a new output folder for each run.
 
-## Compare Copilot groups
+## Run the RQ1 notebook
+
+Open [PR_Merge_Time_RQ1_RQ2.ipynb](PR_Merge_Time_RQ1_RQ2.ipynb) in Jupyter. From the repository root, run:
+
+```bash
+python -m pip install jupyterlab 'pandas>=2.2,<4' 'numpy>=1.26,<3'
+python -m jupyterlab paper2/PR_Merge_Time_RQ1_RQ2.ipynb
+```
+
+Place your dataset at `data/cleaned_public.csv` or set `CSV_PATH` in the first code cell, then select **Run All**. The notebook reads the CSV in chunks and displays pooled and within-repository RQ1 comparisons. It also summarizes the completed RQ2 results. The dataset is supplied separately.
+
+## Compare Copilot groups from the command line
 
 ```bash
 python paper2/prepare.py --input data/cleaned_public.csv --output paper2/outputs/prepared01 --scope all
