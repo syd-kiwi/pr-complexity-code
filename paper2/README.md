@@ -22,6 +22,14 @@ python paper2/run_pipeline.py --input data/cleaned_public.csv --output paper2/ou
 
 Model results go to `paper2/outputs/run01/`. Use a fresh output directory for each run. For a quick check on a small dataset, use `--device cpu --trials 1 --trees 30 --permutation-rows 100`.
 
+### Extract code-changing pull requests
+
+```bash
+python paper2/make_code_pr_subset.py --input data/cleaned_public.csv --output data/code_changing_prs.csv.gz
+```
+
+The script keeps public merged PRs with `is_code_pr` set to true and a valid PR key and merge duration. It streams plain or gzipped CSV input and writes a gzipped CSV. Add `--reference-splits /path/to/splits.csv.gz` from the original run to carry over the split and class for each retained PR. The current training scripts still make their own splits and do not use the exported `original_split` and `original_duration_class` columns.
+
 ### Compare CatBoost on RunPod
 
 From the repository root on a pod with an NVIDIA GPU, run:
