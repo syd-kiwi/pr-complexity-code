@@ -9,7 +9,7 @@ python -m pip install jupyterlab "pandas>=2.2,<4" "numpy>=1.26,<3"
 python -m jupyterlab paper2/PR_Merge_Time_RQ1_RQ2.ipynb
 ```
 
-Put your CSV at `data/cleaned_public.csv` or set `CSV_PATH` in the first cell, then select **Run All**. The notebook compares Copilot seat groups overall and within repositories. It also summarizes the completed RQ2 results.
+Put your CSV at `data/cleaned_public.csv` or set `CSV_PATH` in the first cell, then select **Run All**. The notebook compares Copilot seat groups overall and within repositories. It also summarizes the completed RQ2 results. The final cell saves a timestamped `rq1_report_*.md` in `paper2/outputs/` and prints its location. Share that report when adding the RQ1 results to the manuscript.
 
 ## RQ2. Run the merge-time models
 
